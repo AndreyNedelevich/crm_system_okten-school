@@ -20,13 +20,13 @@ export class OrdersResponseDto {
   @ApiProperty({ nullable: true })
   age?: number | null;
 
-  @ApiProperty({ nullable: true })
+  @ApiProperty({ nullable: true, enum: ['admin', 'user'] })
   course?: string | null;
 
-  @ApiProperty({ nullable: true })
+  @ApiProperty({ nullable: true, enum: ['admin', 'user'] })
   course_format?: string | null;
 
-  @ApiProperty({ nullable: true })
+  @ApiProperty({ nullable: true, enum: ['admin', 'user'] })
   course_type?: string | null;
 
   @ApiProperty({ nullable: true })
