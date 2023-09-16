@@ -1,14 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, Length } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, Length } from 'class-validator';
 
-export class Create_admin_requestDto {
+export class User_requestDto {
   @ApiProperty({
     example: 'amin@gmail.com',
     required: true,
-    description: 'Уникальный email',
+    description: 'Unique email',
     nullable: false,
   })
   @IsString()
+  @IsEmail()
   @IsNotEmpty()
   email: string;
 
@@ -28,6 +29,7 @@ export class Create_admin_requestDto {
     nullable: false,
   })
   @IsString()
+  @Length(5, 18)
   @IsNotEmpty()
   firstName: string;
 
@@ -37,6 +39,7 @@ export class Create_admin_requestDto {
     nullable: false,
   })
   @IsString()
+  @Length(5, 18)
   @IsNotEmpty()
   lastName: string;
 }

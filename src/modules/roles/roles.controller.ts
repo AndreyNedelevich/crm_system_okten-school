@@ -11,7 +11,7 @@ import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { RoleEntity } from '../../database/entities';
 import { CreateRoleDto, RoleResponseDto } from './models/dtos/response';
-import { RolesEnum } from './models/enums';
+import { UserRoleEnum } from "./models/enums";
 import { RolesService } from './services/roles.service';
 
 @ApiTags('Roles')
@@ -38,10 +38,10 @@ export class RolesController {
   })
   @ApiParam({
     name: 'value',
-    enum: RolesEnum,
+    enum: UserRoleEnum,
     description: 'Значение должно быть одно из перечисленных',
   })
-  getByValue(@Param('value') value: RolesEnum) {
+  getByValue(@Param('value') value: UserRoleEnum): Promise<RoleEntity> {
     return this.roleService.getRoleByValue(value);
   }
 }

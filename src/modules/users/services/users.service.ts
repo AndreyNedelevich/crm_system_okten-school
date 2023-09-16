@@ -1,32 +1,31 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { BadRequestException, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 
-import { ProfileEntity, UserEntity } from '../../../database/entities';
-import { RolesService } from '../../roles/services/roles.service';
-import { Admin_responseDto } from '../models/dtos/response';
+import { EmailExistsException } from "../../../common/http";
+import { ProfileEntity } from "../../../database/entities";
+import { RolesService } from "../../roles/services/roles.service";
+import { User_responseDto } from "../models/dtos/response";
+import { UserRepository } from "./user.repository";
+import { UserMapper } from "./user.mapper";
+import { UserRoleEnum } from "../../roles/models/enums";
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
+    private userRepository: UserRepository,
     @InjectRepository(ProfileEntity)
     private readonly profileRepository: Repository<ProfileEntity>,
     private roleService: RolesService,
   ) {}
 
-  async createAdminWithProfile(userDto): Promise<Admin_responseDto> {
-    // const user = await this.userRepository.save({
-    //   ...userDto,
-    // });
-    // const profileUser = await this.profileRepository.save({
-    //   firstName: userDto.firstName,
-    //   lastName: userDto.lastName,
-    // });
-    //
-    // const roleUser = await this.roleService.getRoleByValue('ADMIN');
-
+  async createAdminWithProfile(userDto): Promise<User_responseDto> {
+    const findUser = await this.userRepository.findOne({
+      where: { email: userDto.email },
+    });
+    if (findUser) {
+      throw new EmailExistsException(userDto.email);
+    }
     const [user, profileUser, roleUser] = await Promise.all([
       this.userRepository.save({
         ...userDto,
@@ -35,26 +34,16 @@ export class UsersService {
         firstName: userDto.firstName,
         lastName: userDto.lastName,
       }),
-      this.roleService.getRoleByValue('ADMIN'),
+      this.roleService.getRoleByValue(UserRoleEnum.ADMIN),
     ]);
 
-    if (user || profileUser || roleUser) {
-      user.role = roleUser;
-      user.profile = profileUser;
-
-      await this.userRepository.save(user);
-
-      const adminResponse: Admin_responseDto = {
-        id: user.id,
-        email: user.email,
-        is_active: user.is_active,
-        profile: user.profile,
-        role: user.role,
-      };
-
-      return adminResponse;
-    } else {
-      throw new BadRequestException('Something wrong');
+    if (!user || !profileUser || !roleUser) {
+      throw new BadRequestException('Invalid input data');
     }
+    user.role = roleUser;
+    user.profile = profileUser;
+    await this.userRepository.save(user);
+
+    return UserMapper.toResponseDto(user)
   }
 }

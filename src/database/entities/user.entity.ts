@@ -19,7 +19,7 @@ import { RoleEntity } from './role.entity';
 @Entity('user')
 export class UserEntity {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column({
     type: 'varchar',
@@ -30,7 +30,7 @@ export class UserEntity {
   })
   email: string;
 
-  @Column({ type: 'boolean', default: true })
+  @Column({ type: 'boolean', default: false, nullable: false })
   is_active: boolean;
 
   @Column({
@@ -52,9 +52,16 @@ export class UserEntity {
   @JoinColumn()
   profile: ProfileEntity;
 
-  @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)" })
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+  })
   public created_at: Date;
 
-  @UpdateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)", onUpdate: "CURRENT_TIMESTAMP(6)" })
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
+  })
   public updated_at: Date;
 }

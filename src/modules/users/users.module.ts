@@ -5,6 +5,7 @@ import { ProfileEntity, RoleEntity, UserEntity } from '../../database/entities';
 import { RolesModule } from '../roles/roles.module';
 import { UsersService } from './services/users.service';
 import { UsersController } from './users.controller';
+import { UserRepository } from "./services/user.repository";
 
 @Module({
   controllers: [UsersController],
@@ -12,7 +13,6 @@ import { UsersController } from './users.controller';
     TypeOrmModule.forFeature([UserEntity, RoleEntity, ProfileEntity]),
     RolesModule,
   ],
-  providers: [UsersService],
-  exports: [UsersService],
+  providers: [UsersService,UserRepository],
 })
 export class UsersModule {}

@@ -1,1 +1,1 @@
-export * from './course.enum';
+export * from './user_role.enum';

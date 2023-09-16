@@ -22,15 +22,15 @@ export class ProfileDto {
   @IsNotEmpty()
   lastName: string;
 }
-export class Admin_responseDto {
-  @ApiProperty({ example: '1', description: 'Уникальный идентификатор' })
+export class User_responseDto {
+  @ApiProperty({ example: '1', description: 'Unique identificator' })
   @IsOptional()
   readonly id: number;
 
   @ApiProperty({
     example: 'amin@gmail.com',
     required: true,
-    description: 'Уникальный email',
+    description: 'Unique email',
     nullable: false,
   })
   @IsString()
@@ -40,21 +40,20 @@ export class Admin_responseDto {
   @ApiProperty({
     type: Boolean,
     default: false,
-    description:
-      'Статус акаунта пользователя (true-активный, false-неактивный)',
+    description: 'User account status (true-активный, false-неактивный)',
   })
   @IsBoolean()
   @IsOptional()
-  is_active: boolean;
+  is_active?: boolean;
 
   @ApiProperty({
-    description: 'Профиль пользователя',
+    description: 'User profile',
     type: () => ProfileDto,
   })
   profile: ProfileDto;
 
   @ApiProperty({
-    description: 'Роль пользователя ',
+    description: 'User role',
     type: () => RoleResponseDto,
   })
   role: RoleResponseDto;

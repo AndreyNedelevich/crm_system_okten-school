@@ -1,14 +1,10 @@
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { RoleEntity } from '../../../database/entities';
 import { CreateRoleDto } from '../models/dtos/response';
+import { UserRoleEnum } from "../models/enums";
 
 @Injectable()
 export class RolesService {
@@ -18,18 +14,19 @@ export class RolesService {
   ) {}
 
   async createRole(dto: CreateRoleDto): Promise<RoleEntity> {
-    try {
-      return this.roleRepository.create(dto);
-    } catch {
-      throw new BadRequestException('Invalid input data');
+    const value = dto.value;
+    const findRole = await this.roleRepository.findOne({ where: { value } });
+    if (findRole) {
+      throw new BadRequestException('User with this email alredy exist');
     }
+    return await this.roleRepository.save(this.roleRepository.create(dto));
   }
 
-  async getRoleByValue(value: string) {
-    try {
-      await this.roleRepository.findOne({ where: { value } });
-    } catch {
-      throw new HttpException('Data not find', HttpStatus.BAD_REQUEST);
+  async getRoleByValue(value: UserRoleEnum): Promise<RoleEntity> {
+    const findRole = await this.roleRepository.findOne({ where: { value } });
+    if (!findRole) {
+      throw new BadRequestException("This role doesn't exist");
     }
+    return findRole;
   }
 }
