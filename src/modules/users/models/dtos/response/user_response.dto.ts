@@ -28,7 +28,7 @@ export class User_responseDto {
   readonly id: number;
 
   @ApiProperty({
-    example: 'amin@gmail.com',
+    example: 'admin@gmail.com',
     required: true,
     description: 'Unique email',
     nullable: false,

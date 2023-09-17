@@ -37,20 +37,10 @@ export class UserEntity {
     type: 'varchar',
     length: 255,
     select: false,
-    nullable: false,
+    nullable: true,
     transformer: [passwordHashTransformer],
   })
   password: string;
-
-  @ManyToOne(() => RoleEntity, (role) => role.users)
-  @JoinColumn()
-  role: RoleEntity;
-
-  @OneToOne(() => ProfileEntity, (profile) => profile.user, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  profile: ProfileEntity;
 
   @CreateDateColumn({
     type: 'timestamp',
@@ -64,4 +54,14 @@ export class UserEntity {
     onUpdate: 'CURRENT_TIMESTAMP(6)',
   })
   public updated_at: Date;
+
+  @ManyToOne(() => RoleEntity, (role) => role.users)
+  @JoinColumn()
+  role: RoleEntity;
+
+  @OneToOne(() => ProfileEntity, (profile) => profile.user, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  profile: ProfileEntity;
 }

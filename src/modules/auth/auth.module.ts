@@ -7,17 +7,54 @@ import { UserRepository } from "../users/services/user.repository";
 import { AuthService } from "./services/auth.service";
 import { LocalStrategy } from "./strategies/local-strategy.service";
 import { TokenService } from "./services/token.service";
+import { PassportModule } from "@nestjs/passport";
+import { AuthConfigService } from "../../config/auth/configuration.service";
+import { JwtModule } from "@nestjs/jwt";
+import { APP_GUARD } from "@nestjs/core";
+import { JwtAuthGuard } from "./guards";
+import { JwtStrategy } from "./strategies/jwt.strategy";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { ProfileEntity, RoleEntity, UserEntity } from "../../database/entities";
+import { UsersModule } from "../users/users.module";
+
+
+const JwtFactory=(config: AuthConfigService)=>({
+  secret:  config.accessTokenSecret,
+  signOptions: {
+    expiresIn: config.accessTokenExpiration,
+    }
+})
+
+const JwtRegistrationOptions = {
+  imports: [AuthConfigModule],
+  useFactory: JwtFactory,
+  inject: [AuthConfigService],
+};
+
+const AppGuardProvider={
+  provide: APP_GUARD,
+  useClass: JwtAuthGuard,
+}
 
 @Module({
 imports:[
+  TypeOrmModule.forFeature([UserEntity, RoleEntity, ProfileEntity]),
   ConfigModule.forRoot({
     load: [configuration],
   }),
+  PassportModule.register({ defaultStrategy: 'jwt' }),
+  JwtModule.registerAsync(JwtRegistrationOptions),
   AuthConfigModule,
+  UsersModule,
 ],
   controllers: [AuthController],
-  providers:[UserRepository,AuthService,LocalStrategy,TokenService,]
-
-
+  providers:[
+    UserRepository,
+    AuthService,
+    LocalStrategy,
+    TokenService,
+    AppGuardProvider,
+    JwtStrategy,
+  ]
 })
 export class AuthModule {}

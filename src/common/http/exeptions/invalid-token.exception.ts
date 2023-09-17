@@ -4,6 +4,6 @@ import { ErrorType } from '../../models';
 
 export class InvalidTokenException extends UnauthorizedException {
   constructor() {
-    super({ errorType: ErrorType.InvalidToken });
+    super({ errorType: ErrorType.InvalidToken, message: 'Invalid Token' });
   }
 }

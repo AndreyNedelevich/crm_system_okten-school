@@ -9,7 +9,8 @@ import {
 import { AuthConfigService } from '../../../config/auth/configuration.service';
 import { UserRepository } from "../../users/services/user.repository";
 import { JwtPayload, TokenError, TokenTypeEnum } from '../models';
-import { TokenResponseDto } from "../models/dtos/response";
+import { ActionTokenResponseDto, TokenResponseDto } from "../models/dtos/response";
+import { ActionTokenExpiredException } from "../../../common/http/exeptions/action-token-expired.exception";
 
 @Injectable()
 export class TokenService {
@@ -41,6 +42,18 @@ export class TokenService {
     };
   }
 
+  public generateActionToken(payload: JwtPayload): ActionTokenResponseDto {
+    const accessTokenExpires = this.configService.actionTokenExpiration;
+    const actionToken = this.generateToken(
+      payload,
+      accessTokenExpires,
+      TokenTypeEnum.Action,
+    );
+    return {
+      actionToken,
+    };
+  }
+
   public generateRefreshToken(refreshToken: string): TokenResponseDto {
     const { id, email,role } = this.verifyToken(refreshToken, TokenTypeEnum.Refresh);
     return this.generateAuthToken({ id, email,role });
@@ -62,6 +75,11 @@ export class TokenService {
       if (isRefreshExpired) {
         throw new RefreshTokenExpiredException();
       }
+      const isActionExpired =
+        name === TokenError.TokenExpiredError && type === TokenTypeEnum.Action;
+      if (isActionExpired) {
+        throw new ActionTokenExpiredException();
+      }
       throw new InvalidTokenException();
     }
   }
@@ -72,7 +90,7 @@ export class TokenService {
     type: TokenTypeEnum,
   ): string {
     const secret = this.getSecret(type);
-    this.configService.accessTokenSecret;
+    // this.configService.accessTokenSecret; //???
     return this.jwtService.sign(payload, { expiresIn, secret });
   }
 
@@ -82,6 +100,8 @@ export class TokenService {
         return this.configService.accessTokenSecret;
       case TokenTypeEnum.Refresh:
         return this.configService.refreshTokenSecret;
+      case TokenTypeEnum.Action:
+        return this.configService.actionTokenSecret;
     }
   }
 }

@@ -13,7 +13,9 @@ import { RoleEntity } from '../../database/entities';
 import { CreateRoleDto, RoleResponseDto } from './models/dtos/response';
 import { UserRoleEnum } from "./models/enums";
 import { RolesService } from './services/roles.service';
+import { SkipAuth } from "../../common/decorators";
 
+@SkipAuth()
 @ApiTags('Roles')
 @Controller('roles')
 export class RolesController {

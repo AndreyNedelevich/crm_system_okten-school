@@ -10,6 +10,14 @@ export class AuthConfigService {
     private authConfiguration: ConfigType<typeof configuration>,
   ) {}
 
+  get actionTokenSecret(): string {
+    return this.authConfiguration.actionTokenSecret;
+  }
+
+  get actionTokenExpiration(): string {
+    return this.authConfiguration.actionTokenExpiration;
+  }
+
   get accessTokenSecret(): string {
     return this.authConfiguration.accessTokenSecret;
   }

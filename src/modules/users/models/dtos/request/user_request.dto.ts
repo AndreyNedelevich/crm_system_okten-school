@@ -3,7 +3,7 @@ import { IsEmail, IsNotEmpty, IsString, Length } from 'class-validator';
 
 export class User_requestDto {
   @ApiProperty({
-    example: 'amin@gmail.com',
+    example: 'admin@gmail.com',
     required: true,
     description: 'Unique email',
     nullable: false,
@@ -15,6 +15,7 @@ export class User_requestDto {
 
   @ApiProperty({
     required: true,
+    example: 'admin',
     description: 'min-5, max-15',
     nullable: false,
   })

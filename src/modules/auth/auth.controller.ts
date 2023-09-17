@@ -1,27 +1,22 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post, UseGuards } from "@nestjs/common";
 import {
-  ApiOperation,
+  ApiOperation, ApiResponse,
   ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
-
-// import { CurrentUser, SkipAuth } from '../../common/decorators';
+  ApiUnauthorizedResponse
+} from "@nestjs/swagger";
 import { IUserData } from "../../common/models/interfaces";
-// import {
-//   UserCreateRequestDto,
-//   UserLoginRequestDto,
-// } from '../user/models/dtos/request';
+
 import { LocalAuthGuard } from './guards';
 //import { RefreshTokenRequestDto } from './models/dtos/request';
-import { LoginResponseDto } from "./models/dtos/response/login.response.dto";
+import { ActionTokenResponseDto, LoginResponseDto } from "./models/dtos/response";
 import { AuthService } from './services/auth.service';
 import { TokenService } from './services/token.service';
-import { UserLoginRequestDto } from "../users/models/dtos/request";
+import { UserLoginRequestDto,UserCreateRequestDto } from "../users/models/dtos/request";
 import { CurrentUser, SkipAuth } from "../../common/decorators";
 
  @SkipAuth()
 @ApiTags('Auth')
-@Controller({ path: 'auth', version: '1' })
+@Controller( 'auth' )
 export class AuthController {
   constructor(
     private authService: AuthService,
@@ -31,6 +26,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @ApiOperation({ description: 'User authentication' })
   @Post('sign-in')
+  @ApiResponse({ status: HttpStatus.OK, description: 'Успешная авторизация', type: LoginResponseDto })
   async signIn(
     @CurrentUser() user: IUserData,
     @Body() dto: UserLoginRequestDto,
@@ -38,11 +34,12 @@ export class AuthController {
     return await this.authService.login(user.userId);
   }
 
-  // @ApiOperation({ description: 'User registration' })
-  // @Post('sign-up')
-  // async signUp(@Body() dto: UserCreateRequestDto): Promise<LoginResponseDto> {
-  //   return await this.authService.signUp(dto);
-  // }
+  @ApiOperation({ description: 'User registration' })
+  @Post('admin/registr-manager')
+  @ApiResponse({ status: HttpStatus.CREATED, description: 'Create Manager', type: ActionTokenResponseDto })
+  async registrManager(@Body() dto: UserCreateRequestDto): Promise<ActionTokenResponseDto> {
+    return await this.authService.registrManager(dto);
+  }
 
   // @ApiOperation({ description: 'Renew access in the application' })
   // @ApiUnauthorizedResponse({ description: 'Refresh token invalid or expired' })

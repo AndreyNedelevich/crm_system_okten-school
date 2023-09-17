@@ -9,6 +9,7 @@ import { User_responseDto } from "../models/dtos/response";
 import { UserRepository } from "./user.repository";
 import { UserMapper } from "./user.mapper";
 import { UserRoleEnum } from "../../roles/models/enums";
+import { UserCreateRequestDto } from "../models/dtos/request";
 
 @Injectable()
 export class UsersService {
@@ -19,7 +20,7 @@ export class UsersService {
     private roleService: RolesService,
   ) {}
 
-  async createAdminWithProfile(userDto): Promise<User_responseDto> {
+  async createUserWithProfile(userDto): Promise<User_responseDto> {
     const findUser = await this.userRepository.findOne({
       where: { email: userDto.email },
     });
