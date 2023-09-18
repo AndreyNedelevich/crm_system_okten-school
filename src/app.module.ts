@@ -19,9 +19,6 @@ import { UsersModule } from './modules/users/users.module';
     MysqlConfigModule,
     AuthConfigModule,
     TypeOrmModule.forRootAsync(TypeOrmConfiguration.config),
-    RedisModule.forRoot({
-      url: 'redis://0.0.0.0:6379',
-    }),
     UsersModule,
     OrdersModule,
     AuthModule,

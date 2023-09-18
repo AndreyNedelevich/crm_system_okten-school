@@ -5,7 +5,9 @@ import { User_requestDto } from './models/dtos/request';
 import { User_responseDto } from './models/dtos/response';
 import { UsersService } from './services/users.service';
 import { LoginResponseDto } from "../auth/models/dtos/response";
+import { SkipAuth } from "../../common/decorators";
 
+@SkipAuth()
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {

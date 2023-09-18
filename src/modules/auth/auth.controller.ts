@@ -47,25 +47,28 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: "Get action token for activate manager" })
-  @ApiResponse({ status: HttpStatus.CREATED, description: "Create Manager", type: ActionTokenResponseDto })
+  @ApiResponse({ status: HttpStatus.CREATED, description: "get activate toke", type: ActionTokenResponseDto })
   @Post("admin/get-activate-token/:userId")
-  async getActivateToken(@Param("userId") userId: string): Promise<ActionTokenResponseDto> {
+  async getActivateToken(@Param('userId') userId: any): Promise<ActionTokenResponseDto> {
     return await this.authService.getActivateToken(userId);
   }
 
   @ApiOperation({ summary: "Activate manager" })
   @ApiResponse({
-      status: HttpStatus.OK,
-      description: "Activate manager",
-      content: {
-        "text/plain": {
-          example: "The manager is activated and password created"
-        }
-      }
-    }
-  )
+    status: HttpStatus.OK,
+    description: 'Manager is activated and password created',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Data saved successfully',
+        },
+      },
+    },
+  })
   @Post("admin/activate/:token")
-  async activateManager(@Param("token") token: string, @Body() dto: ActivateManagerRequestDto): Promise<string> {
+  async activateManager(@Param("token") token: string, @Body() dto: ActivateManagerRequestDto): Promise<{message:string}> {
     return await this.authService.activateManager(token, dto);
   }
 

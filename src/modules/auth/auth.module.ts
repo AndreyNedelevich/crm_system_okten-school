@@ -19,6 +19,7 @@ import { UsersModule } from "../users/users.module";
 import { RedisModule } from "@webeleon/nestjs-redis";
 
 
+
 const JwtFactory=(config: AuthConfigService)=>({
   secret:  config.accessTokenSecret,
   signOptions: {
@@ -41,7 +42,7 @@ const AppGuardProvider={
 imports:[
   TypeOrmModule.forFeature([UserEntity, RoleEntity, ProfileEntity]),
   RedisModule.forRoot({
-    url: 'redis://localhost:6379',
+    url: process.env.REDIS_HOST,
   }),
   ConfigModule.forRoot({
     load: [configuration],

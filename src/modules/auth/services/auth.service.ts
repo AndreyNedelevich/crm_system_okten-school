@@ -54,6 +54,7 @@ export class AuthService {
 
   public async getActivateToken (userId:string):Promise<ActionTokenResponseDto> {
     const {actionToken} = this.tokenService.generateActionToken(userId);
+    console.log(actionToken);
     const response=await this.redisClient.setEx(actionToken, 43200, actionToken);
     if(!response){
       throw new BadRequestException('Something wrong');
@@ -74,11 +75,14 @@ export class AuthService {
     const user= await this.userRepository.findOne({
       where: { id: userId },
     });
-    if(user){
+    if(!user){
       throw new EntityNotFoundException()
+    } else if(user.is_active===true){
+      throw new BadRequestException('User is already active');
+    }else{
+      user.password=dto.password;
+      await this.userRepository.save(user);
+      return { message: 'Data saved successfully' };
     }
-    user.password=dto.password;
-    await this.userRepository.save(user);
-    return 'The manager is activated and password created'
   }
 }
