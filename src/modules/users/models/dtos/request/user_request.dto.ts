@@ -14,8 +14,8 @@ export class User_requestDto {
   email: string;
 
   @ApiProperty({
-    required: true,
     example: 'admin',
+    required: true,
     description: 'min-5, max-15',
     nullable: false,
   })
@@ -25,6 +25,7 @@ export class User_requestDto {
   password: string;
 
   @ApiProperty({
+    example: 'Andrey',
     required: true,
     description: 'min-5, max-18',
     nullable: false,
@@ -35,6 +36,7 @@ export class User_requestDto {
   firstName: string;
 
   @ApiProperty({
+    example: 'Shevchenko',
     required: true,
     description: 'min-5, max-18',
     nullable: false,

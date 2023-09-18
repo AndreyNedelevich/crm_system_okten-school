@@ -8,14 +8,13 @@ import {
 } from '../../../common/http';
 import { AuthConfigService } from '../../../config/auth/configuration.service';
 import { UserRepository } from "../../users/services/user.repository";
-import { JwtPayload, TokenError, TokenTypeEnum } from '../models';
+import { JwtPayload, TokenError, TokenTypeEnum } from "../models";
 import { ActionTokenResponseDto, TokenResponseDto } from "../models/dtos/response";
 import { ActionTokenExpiredException } from "../../../common/http/exeptions/action-token-expired.exception";
 
 @Injectable()
 export class TokenService {
   constructor(
-    private usersRepository: UserRepository,
     private jwtService: JwtService,
     private configService: AuthConfigService,
   ) {}
@@ -42,11 +41,12 @@ export class TokenService {
     };
   }
 
-  public generateActionToken(payload: JwtPayload): ActionTokenResponseDto {
-    const accessTokenExpires = this.configService.actionTokenExpiration;
+  public generateActionToken(userId:string): ActionTokenResponseDto {
+    const actionTokenExpires = this.configService.actionTokenExpiration;
+
     const actionToken = this.generateToken(
-      payload,
-      accessTokenExpires,
+      {id:userId},
+      actionTokenExpires,
       TokenTypeEnum.Action,
     );
     return {
@@ -85,7 +85,7 @@ export class TokenService {
   }
 
   private generateToken(
-    payload: JwtPayload,
+    payload: Partial<JwtPayload> ,
     expiresIn: string,
     type: TokenTypeEnum,
   ): string {

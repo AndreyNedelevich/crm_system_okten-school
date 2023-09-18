@@ -14,5 +14,8 @@ import { UserRepository } from "./services/user.repository";
     RolesModule,
   ],
   providers: [UsersService,UserRepository],
+  exports: [
+    UsersService,
+  ]
 })
 export class UsersModule {}

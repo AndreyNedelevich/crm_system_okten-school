@@ -5,4 +5,3 @@ export class EntityNotFoundException extends UnprocessableEntityException {
     super({ message: 'Entity not found' });
   }
 }
-//

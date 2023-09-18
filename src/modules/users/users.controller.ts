@@ -10,6 +10,8 @@ import { LoginResponseDto } from "../auth/models/dtos/response";
 @Controller('users')
 export class UsersController {
   constructor(private userServise: UsersService) {}
+
+
   @ApiOperation({ summary: 'Create a user with administrator role' })
   @ApiResponse({ status: HttpStatus.CREATED, type: LoginResponseDto})
   @Post('createAdmin')

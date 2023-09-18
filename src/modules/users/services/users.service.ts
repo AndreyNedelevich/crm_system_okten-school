@@ -35,7 +35,7 @@ export class UsersService {
         firstName: userDto.firstName,
         lastName: userDto.lastName,
       }),
-      this.roleService.getRoleByValue(UserRoleEnum.ADMIN),
+      this.roleService.getRoleByValue(UserRoleEnum.MANEGER),
     ]);
 
     if (!user || !profileUser || !roleUser) {
@@ -44,7 +44,6 @@ export class UsersService {
     user.role = roleUser;
     user.profile = profileUser;
     await this.userRepository.save(user);
-
     return UserMapper.toResponseDto(user)
   }
 }

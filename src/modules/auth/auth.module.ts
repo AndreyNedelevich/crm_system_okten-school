@@ -16,6 +16,7 @@ import { JwtStrategy } from "./strategies/jwt.strategy";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ProfileEntity, RoleEntity, UserEntity } from "../../database/entities";
 import { UsersModule } from "../users/users.module";
+import { RedisModule } from "@webeleon/nestjs-redis";
 
 
 const JwtFactory=(config: AuthConfigService)=>({
@@ -39,6 +40,9 @@ const AppGuardProvider={
 @Module({
 imports:[
   TypeOrmModule.forFeature([UserEntity, RoleEntity, ProfileEntity]),
+  RedisModule.forRoot({
+    url: 'redis://localhost:6379',
+  }),
   ConfigModule.forRoot({
     load: [configuration],
   }),
