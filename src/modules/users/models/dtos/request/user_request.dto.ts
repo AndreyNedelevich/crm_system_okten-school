@@ -17,7 +17,7 @@ export class User_requestDto {
     example: 'admin',
     required: true,
     description: 'min-5, max-15',
-    nullable: false,
+    nullable: true,
   })
   @IsString()
   @IsNotEmpty()

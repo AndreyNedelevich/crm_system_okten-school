@@ -30,3 +30,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return UserMapper.toUserData(user);
   }
 }
+//Если JwtAuthGuard применен к эндпоинту, где JWT-токен не обязателен, и токен не предоставлен, то JwtAuthGuard
+// не выбросит ошибку, и запрос будет обработан. В этом случае request.user будет пустым (undefined), и вы сможете
+// проверить его значение в вашем контроллере или сервисе.

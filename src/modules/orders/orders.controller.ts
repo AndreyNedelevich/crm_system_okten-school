@@ -1,19 +1,24 @@
-import { Controller, Get } from '@nestjs/common';
-import { ApiExtraModels, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Query } from "@nestjs/common";
+import { ApiBearerAuth, ApiExtraModels, ApiOperation, ApiTags } from "@nestjs/swagger";
 
 import { OrdersResponseDto } from './models/dtos/response';
 import { OrdersService } from './services/orders.service';
-import { SkipAuth } from "../../common/decorators";
+import { ApiPaginatedResponse, PaginatedDto } from "../../common/decorators";
+import { Orders_queryResponseDto } from "./models/dtos/request";
 
-@SkipAuth()
+
 @ApiTags('Orders')
-@ApiExtraModels(OrdersResponseDto)
+@ApiExtraModels(OrdersResponseDto, PaginatedDto)
 @Controller()
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
-  @Get('orders')
 
-  async getOrdersList(): Promise<OrdersResponseDto[]> {
-    return await this.ordersService.getAllOrders();
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get orders with pagination' })
+  @ApiPaginatedResponse('entities', OrdersResponseDto)
+  @Get('orders')
+  async getOrdersList(@Query() query: Orders_queryResponseDto):Promise<PaginatedDto<OrdersResponseDto>> {
+    console.log(query);
+    return await this.ordersService.getAllOrders(query);
   }
 }

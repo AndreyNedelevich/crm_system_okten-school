@@ -6,7 +6,7 @@ export class ActivateManagerRequestDto {
   @IsNotEmpty()
   @Length(5, 15)
   @ApiProperty({
-    example: 'somepassword',
+    example: 'password',
     required: true,
     description: 'min-5, max-15',
     nullable: false,

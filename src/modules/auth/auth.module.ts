@@ -33,6 +33,7 @@ const JwtRegistrationOptions = {
   inject: [AuthConfigService],
 };
 
+//JwtAuthGuard - применяетья ко все ендпоинтам
 const AppGuardProvider={
   provide: APP_GUARD,
   useClass: JwtAuthGuard,
@@ -58,7 +59,7 @@ imports:[
     AuthService,
     LocalStrategy,
     TokenService,
-    AppGuardProvider,
+    AppGuardProvider,//будет прменен ко всем контролерам кроме тех у который стоит @SkipAuth()
     JwtStrategy,
   ]
 })

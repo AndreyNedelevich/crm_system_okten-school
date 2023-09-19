@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { JwtService } from '@nestjs/jwt';
 
 import {
@@ -11,15 +11,18 @@ import { UserRepository } from "../../users/services/user.repository";
 import { JwtPayload, TokenError, TokenTypeEnum } from "../models";
 import { ActionTokenResponseDto, TokenResponseDto } from "../models/dtos/response";
 import { ActionTokenExpiredException } from "../../../common/http/exeptions/action-token-expired.exception";
+import { InjectRedisClient, RedisClient } from "@webeleon/nestjs-redis";
 
 @Injectable()
 export class TokenService {
   constructor(
     private jwtService: JwtService,
     private configService: AuthConfigService,
+    @InjectRedisClient() private redisClient: RedisClient,
+
   ) {}
 
-  public generateAuthToken(payload: JwtPayload): TokenResponseDto {
+ async  generateAuthToken(payload: JwtPayload):Promise<TokenResponseDto> {
     const accessTokenExpires = this.configService.accessTokenExpiration;
     const refreshTokenExpires = this.configService.refreshTokenExpiration;
     const accessToken = this.generateToken(
@@ -33,6 +36,15 @@ export class TokenService {
       TokenTypeEnum.Refresh,
     );
 
+    const [access_token,refresh_token] = await Promise.all([
+      this.redisClient.setEx(accessToken,14400, accessToken),
+      this.redisClient.setEx(refreshToken,28800, refreshToken),
+    ]);
+
+    if(!access_token||!refresh_token){
+      throw new BadRequestException('Tokens do not save');
+    }
+
     return {
       accessToken,
       accessTokenExpires,
@@ -41,7 +53,7 @@ export class TokenService {
     };
   }
 
-  public generateActionToken(userId:string): ActionTokenResponseDto {
+  public async generateActionToken(userId:string) {
     const actionTokenExpires = this.configService.actionTokenExpiration;
 
     const actionToken = this.generateToken(
@@ -49,20 +61,28 @@ export class TokenService {
       actionTokenExpires,
       TokenTypeEnum.Action,
     );
+    const action_token=await this.redisClient.setEx(actionToken, 43200, actionToken);
+    if(!action_token){
+      throw new BadRequestException('Something wrong');
+    }
     return {
       actionToken,
     };
   }
 
-  public generateRefreshToken(refreshToken: string): TokenResponseDto {
-    const { id, email,role } = this.verifyToken(refreshToken, TokenTypeEnum.Refresh);
-    return this.generateAuthToken({ id, email,role });
+  async generateRefreshToken(refreshToken: string):Promise<TokenResponseDto>{
+    const refreshTokenFromRedis =  await this.redisClient.get(refreshToken);
+    if (!refreshTokenFromRedis||refreshToken !== refreshTokenFromRedis) {
+      throw new InvalidTokenException();
+    }
+    const { id, email, role } = this.verifyToken(refreshToken, TokenTypeEnum.Refresh);
+    return  this.generateAuthToken({ id, email, role });
   }
+
 
   public verifyToken(token: string, type: TokenTypeEnum): JwtPayload {
     try {
       const secret = this.getSecret(type);
-
       return this.jwtService.verify(token, { secret });
     } catch (name) {
       const isAccessExpired =

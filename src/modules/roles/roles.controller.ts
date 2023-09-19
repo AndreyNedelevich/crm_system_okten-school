@@ -7,7 +7,7 @@ import {
   Param,
   Post,
 } from '@nestjs/common';
-import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 import { RoleEntity } from '../../database/entities';
 import { CreateRoleDto, RoleResponseDto } from './models/dtos/response';
@@ -15,12 +15,13 @@ import { UserRoleEnum } from "./models/enums";
 import { RolesService } from './services/roles.service';
 import { SkipAuth } from "../../common/decorators";
 
-@SkipAuth()
+//@SkipAuth()
 @ApiTags('Roles')
 @Controller('roles')
 export class RolesController {
   constructor(private roleService: RolesService) {}
 
+  @ApiBearerAuth()
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiResponse({
@@ -32,6 +33,7 @@ export class RolesController {
     return this.roleService.createRole(dto);
   }
 
+  @ApiBearerAuth()
   @Get('/:value')
   @ApiResponse({
     status: HttpStatus.OK,

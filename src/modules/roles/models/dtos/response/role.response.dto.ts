@@ -14,7 +14,7 @@ export class RoleResponseDto {
   @ApiProperty({
     enum: UserRoleEnum,
     enumName: 'UserRoleEnum',
-    example: UserRoleEnum.ADMIN,
+    example: UserRoleEnum.MANEGER,
     description: 'ADMIN or MANAGER',
   })
   @IsEnum(UserRoleEnum)

@@ -7,7 +7,6 @@ import { UserRepository } from "../../users/services/user.repository";
 import { ActionTokenResponseDto, LoginResponseDto } from "../models/dtos/response";
 import { TokenService } from './token.service';
 import { InjectRepository } from "@nestjs/typeorm";
-import { UserCreateRequestDto } from "../../users/models/dtos/request";
 import { UsersService } from "../../users/services/users.service";
 import { User_responseDto } from "../../users/models/dtos/response";
 import { ActivateManagerRequestDto } from "../models/dtos/request";
@@ -23,7 +22,9 @@ export class AuthService {
       @InjectRedisClient() private redisClient: RedisClient,
   ) {}
 
-  public async login(userId: number): Promise<LoginResponseDto> {
+
+
+  public async login(userId: number):Promise<LoginResponseDto> {
     const user = await this.userRepository
       .createQueryBuilder('user')
        .leftJoinAndSelect('user.profile', 'profile')
@@ -35,37 +36,31 @@ export class AuthService {
     //   relations: ['role'],
     //   // relations: ['profile', 'roles'],
     // });
-
-    const token = this.tokenService.generateAuthToken({
+    const token = await this.tokenService.generateAuthToken({
       id: user.id,
       email: user.email,
       role: user.role.value
     });
+
     return { token, user: UserMapper.toResponseDto(user) };
   }
 
-  public async registrManager(dto: UserCreateRequestDto): Promise<User_responseDto> {
-    const user = await this.userService.createUserWithProfile(dto);
-    if(!user){
-      throw new BadRequestException('Invalid input data');
-    }
-    return  user ;
+
+
+  public  getActivateToken (userId:string):Promise<ActionTokenResponseDto> {
+    return this.tokenService.generateActionToken(userId);
   }
 
-  public async getActivateToken (userId:string):Promise<ActionTokenResponseDto> {
-    const {actionToken} = this.tokenService.generateActionToken(userId);
-    console.log(actionToken);
-    const response=await this.redisClient.setEx(actionToken, 43200, actionToken);
-    if(!response){
-      throw new BadRequestException('Something wrong');
-    }
-    return {actionToken};
-  }
 
   public async activateManager (token:string,dto:ActivateManagerRequestDto){
     const tokenFromRedis = await this.redisClient.get(token)
+
+    if(token!==tokenFromRedis){
+      throw new InvalidTokenException();
+    }
+
     const payload = this.tokenService.verifyToken(
-      tokenFromRedis,
+      token,
       TokenTypeEnum.Action,
     );
     if (!payload) {
