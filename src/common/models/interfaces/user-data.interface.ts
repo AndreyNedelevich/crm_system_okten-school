@@ -1,4 +1,4 @@
 export interface IUserData {
-  userId:number;
+  userId: number;
   email: string;
 }

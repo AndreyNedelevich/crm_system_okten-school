@@ -1,13 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Course_formatEnum, Course_typeEnum, CourseEnum, StatusEnum } from "../../enums";
+
+import {
+  Course_formatEnum,
+  Course_typeEnum,
+  CourseEnum,
+  StatusEnum,
+} from '../../enums';
 
 //проавильно ли в респонсе ДТО предустмотрел возможность что во многих полях вернеться null.
 export class OrdersResponseDto {
   @ApiProperty({
     type: Number,
     nullable: false,
-    }
-  )
+  })
   id: bigint;
 
   @ApiProperty({
@@ -39,7 +44,7 @@ export class OrdersResponseDto {
   @ApiProperty({
     type: Number,
     nullable: true,
-    example: 35
+    example: 35,
   })
   age?: number | null;
 
@@ -47,7 +52,7 @@ export class OrdersResponseDto {
     enum: CourseEnum,
     enumName: 'CourseEnum',
     example: CourseEnum.FE,
-    nullable: true
+    nullable: true,
   })
   course?: string | null;
 
@@ -55,7 +60,7 @@ export class OrdersResponseDto {
     enum: Course_formatEnum,
     enumName: 'Course_formatEnum',
     example: Course_formatEnum.static,
-    nullable: true
+    nullable: true,
   })
   course_format?: string | null;
 
@@ -63,24 +68,22 @@ export class OrdersResponseDto {
     enum: Course_typeEnum,
     enumName: 'Course_typeEnum',
     example: Course_typeEnum.vip,
-    nullable: true
+    nullable: true,
   })
   course_type?: string | null;
 
   @ApiProperty({
-      type: Number,
-      nullable: true,
-      example: 42000,
-    }
-  )
+    type: Number,
+    nullable: true,
+    example: 42000,
+  })
   sum?: number | null;
 
   @ApiProperty({
-      type: Number,
-      nullable: true,
-      example: 15000,
-    }
-  )
+    type: Number,
+    nullable: true,
+    example: 15000,
+  })
   alredyPaid?: number | null;
 
   @ApiProperty({
@@ -101,12 +104,10 @@ export class OrdersResponseDto {
     enum: StatusEnum,
     enumName: 'StatusEnum',
     example: StatusEnum.inWork,
-    nullable: true
+    nullable: true,
   })
   status?: string | null;
 
-  @ApiProperty({ nullable: true,type: Date})
+  @ApiProperty({ nullable: true, type: Date })
   created_at: Date;
 }
-
-

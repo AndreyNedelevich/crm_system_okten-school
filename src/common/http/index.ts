@@ -1,2 +1,2 @@
-export * from './exeptions'
-export * from './http-exeption.filter'
+export * from './exeptions';
+export * from './http-exeption.filter';

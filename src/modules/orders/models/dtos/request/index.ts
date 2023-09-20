@@ -1,1 +1,1 @@
-export * from './orders_query.response.dto'
+export * from './orders_query.response.dto';

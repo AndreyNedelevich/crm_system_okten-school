@@ -1,17 +1,16 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRedisClient, RedisClient } from '@webeleon/nestjs-redis';
 
 import {
   AccessTokenExpiredException,
   InvalidTokenException,
   RefreshTokenExpiredException,
 } from '../../../common/http';
+import { ActionTokenExpiredException } from '../../../common/http/exeptions/action-token-expired.exception';
 import { AuthConfigService } from '../../../config/auth/configuration.service';
-import { UserRepository } from "../../users/services/user.repository";
-import { JwtPayload, TokenError, TokenTypeEnum } from "../models";
-import { ActionTokenResponseDto, TokenResponseDto } from "../models/dtos/response";
-import { ActionTokenExpiredException } from "../../../common/http/exeptions/action-token-expired.exception";
-import { InjectRedisClient, RedisClient } from "@webeleon/nestjs-redis";
+import { JwtPayload, TokenError, TokenTypeEnum } from '../models';
+import { TokenResponseDto } from '../models/dtos/response';
 
 @Injectable()
 export class TokenService {
@@ -19,10 +18,9 @@ export class TokenService {
     private jwtService: JwtService,
     private configService: AuthConfigService,
     @InjectRedisClient() private redisClient: RedisClient,
-
   ) {}
 
- async  generateAuthToken(payload: JwtPayload):Promise<TokenResponseDto> {
+  async generateAuthToken(payload: JwtPayload): Promise<TokenResponseDto> {
     const accessTokenExpires = this.configService.accessTokenExpiration;
     const refreshTokenExpires = this.configService.refreshTokenExpiration;
     const accessToken = this.generateToken(
@@ -36,12 +34,12 @@ export class TokenService {
       TokenTypeEnum.Refresh,
     );
 
-    const [access_token,refresh_token] = await Promise.all([
-      this.redisClient.setEx(accessToken,14400, accessToken),
-      this.redisClient.setEx(refreshToken,28800, refreshToken),
+    const [access_token, refresh_token] = await Promise.all([
+      this.redisClient.setEx(accessToken, 86400, accessToken),
+      this.redisClient.setEx(refreshToken, 86400, refreshToken),
     ]);
 
-    if(!access_token||!refresh_token){
+    if (!access_token || !refresh_token) {
       throw new BadRequestException('Tokens do not save');
     }
 
@@ -53,16 +51,20 @@ export class TokenService {
     };
   }
 
-  public async generateActionToken(userId:string) {
+  public async generateActionToken(userId: string) {
     const actionTokenExpires = this.configService.actionTokenExpiration;
 
     const actionToken = this.generateToken(
-      {id:userId},
+      { id: userId },
       actionTokenExpires,
       TokenTypeEnum.Action,
     );
-    const action_token=await this.redisClient.setEx(actionToken, 43200, actionToken);
-    if(!action_token){
+    const action_token = await this.redisClient.setEx(
+      actionToken,
+      43200,
+      actionToken,
+    );
+    if (!action_token) {
       throw new BadRequestException('Something wrong');
     }
     return {
@@ -70,15 +72,17 @@ export class TokenService {
     };
   }
 
-  async generateRefreshToken(refreshToken: string):Promise<TokenResponseDto>{
-    const refreshTokenFromRedis =  await this.redisClient.get(refreshToken);
-    if (!refreshTokenFromRedis||refreshToken !== refreshTokenFromRedis) {
+  async generateRefreshToken(refreshToken: string): Promise<TokenResponseDto> {
+    const refreshTokenFromRedis = await this.redisClient.get(refreshToken);
+    if (!refreshTokenFromRedis || refreshToken !== refreshTokenFromRedis) {
       throw new InvalidTokenException();
     }
-    const { id, email, role } = this.verifyToken(refreshToken, TokenTypeEnum.Refresh);
-    return  this.generateAuthToken({ id, email, role });
+    const { id, email, role } = this.verifyToken(
+      refreshToken,
+      TokenTypeEnum.Refresh,
+    );
+    return await this.generateAuthToken({ id, email, role });
   }
-
 
   public verifyToken(token: string, type: TokenTypeEnum): JwtPayload {
     try {
@@ -105,7 +109,7 @@ export class TokenService {
   }
 
   private generateToken(
-    payload: Partial<JwtPayload> ,
+    payload: Partial<JwtPayload>,
     expiresIn: string,
     type: TokenTypeEnum,
   ): string {

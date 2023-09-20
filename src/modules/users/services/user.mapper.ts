@@ -1,5 +1,5 @@
-import { IUserData } from "../../../common/models/interfaces";
-import { UserEntity } from "../../../database/entities";
+import { IUserData } from '../../../common/models/interfaces';
+import { UserEntity } from '../../../database/entities';
 import { User_responseDto } from '../models/dtos/response';
 
 export class UserMapper {
@@ -12,8 +12,6 @@ export class UserMapper {
       role: entity.role,
     };
   }
-
-
 
   public static toUserData(entity: UserEntity): IUserData {
     return {

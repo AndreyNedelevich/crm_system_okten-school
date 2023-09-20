@@ -1,5 +1,5 @@
 export enum ColumnsEnum {
-  id='id',
+  id = 'id',
   name = 'name',
   surname = 'surname',
   email = 'email',
@@ -8,10 +8,10 @@ export enum ColumnsEnum {
   course = 'course',
   course_format = 'course_format',
   course_type = 'course_type',
-  status='status',
+  status = 'status',
   sum = 'sum',
   alreadyPaid = 'alredyPaid',
   group = 'group',
-  create_at = 'create_at',
-  manager='manager'
+  created_at = 'created_at',
+  manager = 'manager',
 }

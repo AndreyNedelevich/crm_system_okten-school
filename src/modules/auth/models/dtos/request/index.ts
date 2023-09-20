@@ -1,2 +1,2 @@
-export * from './activate.request.dto'
-export * from './refresh-token.request'
+export * from './activate.request.dto';
+export * from './refresh-token.request';

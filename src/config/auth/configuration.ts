@@ -12,7 +12,5 @@ export default registerAs(configToken, () => ({
   refreshTokenExpiration: configService.get<string>(
     'AUTH_REFRESH_TOKEN_EXPIRATION',
   ),
-  actionTokenExpiration: configService.get<string>(
-    'ACTION_TOKEN_EXPIRATION',
-  ),
+  actionTokenExpiration: configService.get<string>('ACTION_TOKEN_EXPIRATION'),
 }));

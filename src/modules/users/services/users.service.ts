@@ -1,15 +1,14 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
-import { EmailExistsException } from "../../../common/http";
-import { ProfileEntity } from "../../../database/entities";
-import { RolesService } from "../../roles/services/roles.service";
-import { User_responseDto } from "../models/dtos/response";
-import { UserRepository } from "./user.repository";
-import { UserMapper } from "./user.mapper";
-import { UserRoleEnum } from "../../roles/models/enums";
-import { ManagerCreateRequestDto } from "../models/dtos/request";
+import { EmailExistsException } from '../../../common/http';
+import { ProfileEntity } from '../../../database/entities';
+import { UserRoleEnum } from '../../roles/models/enums';
+import { RolesService } from '../../roles/services/roles.service';
+import { User_responseDto } from '../models/dtos/response';
+import { UserMapper } from './user.mapper';
+import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UsersService {
@@ -19,7 +18,6 @@ export class UsersService {
     private readonly profileRepository: Repository<ProfileEntity>,
     private roleService: RolesService,
   ) {}
-
 
   async createUserWithProfile(userDto): Promise<User_responseDto> {
     const findUser = await this.userRepository.findOne({
@@ -45,6 +43,6 @@ export class UsersService {
     user.role = roleUser;
     user.profile = profileUser;
     await this.userRepository.save(user);
-    return UserMapper.toResponseDto(user)
+    return UserMapper.toResponseDto(user);
   }
 }

@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 
 import { RoleEntity } from '../../../database/entities';
 import { CreateRoleDto } from '../models/dtos/response';
-import { UserRoleEnum } from "../models/enums";
+import { UserRoleEnum } from '../models/enums';
 
 @Injectable()
 export class RolesService {
@@ -17,7 +17,7 @@ export class RolesService {
     const value = dto.value;
     const findRole = await this.roleRepository.findOne({ where: { value } });
     if (findRole) {
-      throw new BadRequestException('User with this email alredy exist');
+      throw new BadRequestException('This role alredy exist');
     }
     return await this.roleRepository.save(this.roleRepository.create(dto));
   }
