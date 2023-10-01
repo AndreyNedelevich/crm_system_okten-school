@@ -3,19 +3,20 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne, OneToMany,
+  ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
-} from "typeorm";
+  UpdateDateColumn,
+} from 'typeorm';
 
 import {
   lowerCaseTransformer,
   passwordHashTransformer,
 } from '../../common/helpers';
+import { CommentsEntity } from './comments.entity';
 import { ProfileEntity } from './profile.entity';
 import { RoleEntity } from './role.entity';
-import { CommentsEntity } from "./comments.entity";
 
 @Entity('user')
 export class UserEntity {
