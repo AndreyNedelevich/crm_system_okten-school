@@ -3,11 +3,11 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne,
+  ManyToOne, OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+  UpdateDateColumn
+} from "typeorm";
 
 import {
   lowerCaseTransformer,
@@ -15,6 +15,7 @@ import {
 } from '../../common/helpers';
 import { ProfileEntity } from './profile.entity';
 import { RoleEntity } from './role.entity';
+import { CommentsEntity } from "./comments.entity";
 
 @Entity('user')
 export class UserEntity {
@@ -64,4 +65,7 @@ export class UserEntity {
   })
   @JoinColumn()
   profile: ProfileEntity;
+
+  @OneToMany(() => CommentsEntity, (comment) => comment.user)
+  comments: CommentsEntity[];
 }

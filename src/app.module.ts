@@ -8,7 +8,7 @@ import { AuthConfigModule } from './config/auth/config.module';
 import { MysqlConfigModule } from './config/connectDB/config.module';
 import { TypeOrmConfiguration } from './config/connectDB/type-orm-configuration';
 import { AuthModule } from './modules/auth/auth.module';
-import { OrdersModule } from './modules/orders/orders.module';
+import { CommentsModule } from './modules/comments/comments.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { UsersModule } from './modules/users/users.module';
 
@@ -19,7 +19,7 @@ import { UsersModule } from './modules/users/users.module';
     AuthConfigModule,
     TypeOrmModule.forRootAsync(TypeOrmConfiguration.config),
     UsersModule,
-    OrdersModule,
+    CommentsModule,
     AuthModule,
     RolesModule,
   ],

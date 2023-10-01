@@ -1,4 +1,14 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+
+import { CommentsEntity } from './comments.entity';
+import { GroupsEntity } from './groups.entity';
 
 @Entity({ name: 'orders' })
 export class Orders {
@@ -46,4 +56,11 @@ export class Orders {
 
   @Column({ type: 'varchar', length: 15, nullable: true })
   status: string;
+
+  @ManyToOne(() => GroupsEntity, (groups) => groups.order)
+  @JoinColumn({ name: 'groupId' })
+  group: GroupsEntity;
+
+  @OneToMany(() => CommentsEntity, (comment) => comment.order)
+  comments: CommentsEntity[];
 }
