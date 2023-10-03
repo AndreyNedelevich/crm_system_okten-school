@@ -19,7 +19,7 @@ import { UsersService } from './services/users.service';
 export class UsersController {
   constructor(private userServise: UsersService) {}
 
-  @Roles('ADMIN')
+  @SkipAuth()
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a user with administrator role' })
   @ApiResponse({
@@ -32,6 +32,8 @@ export class UsersController {
     return this.userServise.createUserWithProfile(dto);
   }
 
+  @Roles('ADMIN')
+  //TODO
   @SkipAuth()
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a user with manager role' })

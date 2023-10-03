@@ -4,10 +4,10 @@ import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { UserRoleEnum } from '../../enums';
 
 export class RoleResponseDto {
-  // @ApiProperty({
-  //   example: '1',
-  //   description: 'Уникальный идентификатор',
-  // })
+  @ApiProperty({
+    example: '1',
+    description: 'Уникальный идентификатор',
+  })
   @IsOptional()
   readonly id: number;
 

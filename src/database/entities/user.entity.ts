@@ -7,7 +7,6 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 
 import {
@@ -15,6 +14,7 @@ import {
   passwordHashTransformer,
 } from '../../common/helpers';
 import { CommentsEntity } from './comments.entity';
+import { Orders } from './orders.entity';
 import { ProfileEntity } from './profile.entity';
 import { RoleEntity } from './role.entity';
 
@@ -50,12 +50,8 @@ export class UserEntity {
   })
   public created_at: Date;
 
-  @UpdateDateColumn({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    onUpdate: 'CURRENT_TIMESTAMP(6)',
-  })
-  public updated_at: Date;
+  @OneToMany(() => Orders, (orders) => orders.user)
+  orders: Orders[];
 
   @ManyToOne(() => RoleEntity, (role) => role.users)
   @JoinColumn()

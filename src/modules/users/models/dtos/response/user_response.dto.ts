@@ -1,30 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
+import { Profile_responseDtoDto } from '../../../../profile/models/dtos/response';
 import { RoleResponseDto } from '../../../../roles/models/dtos/response';
 
-export class ProfileDto {
-  @ApiProperty({
-    description: 'Имя пользователя',
-    example: 'John',
-    required: true,
-  })
-  @IsString()
-  @IsNotEmpty()
-  firstName: string;
-
-  @ApiProperty({
-    description: 'Фамилия пользователя',
-    example: 'Doe',
-    required: true,
-  })
-  @IsString()
-  @IsNotEmpty()
-  lastName: string;
-}
 export class User_responseDto {
   @ApiProperty({ example: '1', description: 'Unique identificator' })
-  @IsOptional()
   readonly id: number;
 
   @ApiProperty({
@@ -48,9 +29,9 @@ export class User_responseDto {
 
   @ApiProperty({
     description: 'User profile',
-    type: () => ProfileDto,
+    type: () => Profile_responseDtoDto,
   })
-  profile: ProfileDto;
+  profile: Profile_responseDtoDto;
 
   @ApiProperty({
     description: 'User role',

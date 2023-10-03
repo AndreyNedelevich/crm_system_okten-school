@@ -1,1 +1,1 @@
-export * from './group.response.dto';
+export * from './group.request.dto';

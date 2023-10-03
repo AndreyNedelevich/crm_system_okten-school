@@ -3,14 +3,13 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { RedisModule } from '@webeleon/nestjs-redis';
 
 import { AuthConfigModule } from '../../config/auth/config.module';
 import configuration from '../../config/auth/configuration';
 import { AuthConfigService } from '../../config/auth/configuration.service';
-import { ProfileEntity, RoleEntity, UserEntity } from '../../database/entities';
-import { UserRepository } from '../users/services/user.repository';
+import { ProfileModule } from '../profile/profile.module';
+import { RolesModule } from '../roles/roles.module';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { JwtAuthGuard } from './guards';
@@ -40,7 +39,6 @@ const AppGuardProvider = {
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserEntity, RoleEntity, ProfileEntity]),
     RedisModule.forRoot({
       url: process.env.REDIS_HOST,
     }),
@@ -51,10 +49,11 @@ const AppGuardProvider = {
     JwtModule.registerAsync(JwtRegistrationOptions),
     AuthConfigModule,
     UsersModule,
+    RolesModule,
+    ProfileModule,
   ],
   controllers: [AuthController],
   providers: [
-    UserRepository,
     AuthService,
     LocalStrategy,
     TokenService,

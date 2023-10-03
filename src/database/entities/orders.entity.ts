@@ -9,6 +9,7 @@ import {
 
 import { CommentsEntity } from './comments.entity';
 import { GroupsEntity } from './groups.entity';
+import { UserEntity } from './user.entity';
 
 @Entity({ name: 'orders' })
 export class Orders {
@@ -57,9 +58,13 @@ export class Orders {
   @Column({ type: 'varchar', length: 15, nullable: true })
   status: string;
 
+  @ManyToOne(() => UserEntity, (user) => user.orders)
+  @JoinColumn({ name: 'userId' })
+  user: UserEntity;
+
   @ManyToOne(() => GroupsEntity, (groups) => groups.order)
   @JoinColumn({ name: 'groupId' })
-  group: GroupsEntity;
+  groups: GroupsEntity;
 
   @OneToMany(() => CommentsEntity, (comment) => comment.order)
   comments: CommentsEntity[];

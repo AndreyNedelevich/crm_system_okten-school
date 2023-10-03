@@ -76,7 +76,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Get action token for activate manager' })
   @ApiResponse({
     status: HttpStatus.CREATED,
-    description: 'get activate toke',
+    description: 'get activate token',
     type: ActionTokenResponseDto,
   })
   @Post('admin/get-activate-token/:userId')

@@ -7,7 +7,6 @@ import {
 } from '../../../common/http';
 import { UserMapper } from '../../users/services/user.mapper';
 import { UserRepository } from '../../users/services/user.repository';
-import { UsersService } from '../../users/services/users.service';
 import { TokenTypeEnum } from '../models';
 import { ActivateManagerRequestDto } from '../models/dtos/request';
 import {
@@ -21,7 +20,6 @@ export class AuthService {
   constructor(
     private userRepository: UserRepository,
     private tokenService: TokenService,
-    private userService: UsersService,
     @InjectRedisClient() private redisClient: RedisClient,
   ) {}
 
@@ -42,7 +40,6 @@ export class AuthService {
       email: user.email,
       role: user.role.value,
     });
-
     return { token, user: UserMapper.toResponseDto(user) };
   }
 

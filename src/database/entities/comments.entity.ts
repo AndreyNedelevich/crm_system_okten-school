@@ -1,4 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
 import {
   Column,
   CreateDateColumn,
@@ -6,7 +5,6 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 
 import { Orders } from './orders.entity';
@@ -14,7 +12,6 @@ import { UserEntity } from './user.entity';
 
 @Entity({ name: 'comments' })
 export class CommentsEntity {
-  @ApiProperty({ example: '1', description: 'Уникальный идентификатор' })
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -25,20 +22,12 @@ export class CommentsEntity {
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',
   })
-  public created_at: Date;
-
-  @UpdateDateColumn({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    onUpdate: 'CURRENT_TIMESTAMP(6)',
-  })
-  public updated_at: Date;
+  created_at: Date;
 
   @ManyToOne(() => UserEntity, (user) => user.comments)
-  @JoinColumn({ name: 'userId' })
+  //@JoinColumn({ name: 'userId' })
   user: UserEntity;
 
   @ManyToOne(() => Orders, (order) => order.comments)
-  @JoinColumn({ name: 'orderId' })
   order: Orders;
 }
