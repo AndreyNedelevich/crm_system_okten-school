@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 
-import { GroupsEntity } from '../../../database/entities/groups.entity';
+import { GroupsEntity } from '../../../database/entities';
 import { GroupRequestDto } from '../models/dtos/request';
 import { GroupResponseDto } from '../models/dtos/response';
 

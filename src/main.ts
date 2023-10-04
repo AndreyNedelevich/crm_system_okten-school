@@ -1,6 +1,7 @@
 import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as compression from 'compression';
 
 import { AppModule } from './app.module';
 import { SwaggerHelper } from './common/helpers/swgger.helpers';
@@ -47,7 +48,7 @@ function setCorsPolicy(app: INestApplication): void {
 }
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true });
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -61,6 +62,7 @@ async function bootstrap() {
 
   const appConfig: AppConfigService =
     app.get<AppConfigService>(AppConfigService);
+  app.use(compression());
 
   await app.listen(appConfig.port, appConfig.hostname, () => {
     const url = `http://${appConfig.hostname}:${appConfig.port}`;
@@ -69,4 +71,4 @@ async function bootstrap() {
   });
 }
 
-bootstrap();
+bootstrap().then();

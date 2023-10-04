@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { PaginatedDto } from '../../../common/decorators';
-import { Orders_queryResponseDto } from '../models/dtos/request';
+import { IUserData } from '../../../common/models/interfaces';
+import {
+  Orders_editRequestDto,
+  Orders_queryRequestDto,
+} from '../models/dtos/request';
 import {
   CommentsOrderResponseDto,
   OrdersResponseDto,
@@ -13,20 +17,28 @@ export class OrdersService {
   constructor(private readonly ordersRepository: OrdersRepository) {}
 
   async getAllOrders(
-    query: Orders_queryResponseDto,
+    query: Orders_queryRequestDto,
   ): Promise<PaginatedDto<OrdersResponseDto>> {
     return await this.ordersRepository.getAllOrders(query);
+  }
+
+  async editOrder(
+    orderId: string,
+    dto: Orders_editRequestDto,
+    currentUser: IUserData,
+  ) {
+    return await this.ordersRepository.editOrder(orderId, dto, currentUser);
   }
 
   async createNewCommentForOrder(
     orderId,
     dto,
-    userId,
+    user,
   ): Promise<CommentsOrderResponseDto> {
     return await this.ordersRepository.createNewCommentForOrder(
       orderId,
       dto,
-      userId,
+      user,
     );
   }
 }

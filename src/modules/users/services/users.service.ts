@@ -1,7 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { EmailExistsException } from '../../../common/http';
+import {
+  EmailExistsException,
+  EntityNotFoundException,
+} from '../../../common/http';
 import { User_responseDto } from '../models/dtos/response';
+import { UserMapper } from './user.mapper';
 import { UserRepository } from './user.repository';
 
 @Injectable()
@@ -17,23 +21,45 @@ export class UsersService {
     }
 
     return await this.userRepository.createUserWithProfile(userDto);
-    // const [user, profileUser, roleUser] = await Promise.all([
-    //   this.userRepository.save({
-    //     ...userDto,
-    //   }),
-    //   this.profileRepository.save({
-    //     firstName: userDto.firstName,
-    //     lastName: userDto.lastName,
-    //   }),
-    //   this.roleService.getRoleByValue(UserRoleEnum.MANEGER),
-    // ]);
-    //
-    // if (!user || !profileUser || !roleUser) {
-    //   throw new BadRequestException('Invalid input data');
-    // }
-    // user.role = roleUser;
-    // user.profile = profileUser;
-    // await this.userRepository.save(user);
-    // return UserMapper.toResponseDto(user);
+  }
+
+  public async currentUser(userId: number): Promise<User_responseDto> {
+    const findUser = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['profile', 'role'],
+    });
+    if (!findUser) {
+      throw new EntityNotFoundException();
+    }
+    return UserMapper.toResponseDto(findUser);
+  }
+
+  public async banUser(userId: number): Promise<{ message: string }> {
+    const findUser = await this.userRepository.findOne({
+      where: { id: userId },
+    });
+    if (!findUser) {
+      throw new EntityNotFoundException();
+    }
+    if (findUser.is_active === false) {
+      throw new BadRequestException('User already baned');
+    }
+    findUser.is_active = false;
+    await this.userRepository.save(findUser);
+    return { message: `${findUser.profile.firstName} was baned` };
+  }
+  public async unbanUser(userId: number): Promise<{ message: string }> {
+    const findUser = await this.userRepository.findOne({
+      where: { id: userId },
+    });
+    if (!findUser) {
+      throw new EntityNotFoundException();
+    }
+    if (findUser.is_active === true) {
+      throw new BadRequestException('User already unbaned');
+    }
+    findUser.is_active = true;
+    await this.userRepository.save(findUser);
+    return { message: `${findUser.profile.firstName} was unbaned` };
   }
 }

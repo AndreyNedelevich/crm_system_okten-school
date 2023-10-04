@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
@@ -10,6 +10,7 @@ import configuration from '../../config/auth/configuration';
 import { AuthConfigService } from '../../config/auth/configuration.service';
 import { ProfileModule } from '../profile/profile.module';
 import { RolesModule } from '../roles/roles.module';
+import { UserRepository } from '../users/services/user.repository';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { JwtAuthGuard } from './guards';
@@ -48,17 +49,18 @@ const AppGuardProvider = {
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync(JwtRegistrationOptions),
     AuthConfigModule,
-    UsersModule,
+    forwardRef(() => UsersModule),
     RolesModule,
     ProfileModule,
   ],
   controllers: [AuthController],
   providers: [
     AuthService,
+    JwtStrategy,
     LocalStrategy,
     TokenService,
-    AppGuardProvider, //будет прменен ко всем контролерам кроме тех у который стоит @SkipAuth()
-    JwtStrategy,
+    AppGuardProvider,
   ],
+  exports: [TokenService],
 })
 export class AuthModule {}

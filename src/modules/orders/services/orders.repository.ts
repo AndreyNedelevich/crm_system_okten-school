@@ -1,23 +1,34 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { DataSource, Repository, SelectQueryBuilder } from 'typeorm';
 import { DateUtils } from 'typeorm/util/DateUtils';
 
 import { PaginatedDto } from '../../../common/decorators';
 import { OrderEnum } from '../../../common/models';
+import { IUserData } from '../../../common/models/interfaces';
 import { Orders } from '../../../database/entities';
 import { CommentsRepository } from '../../comments/services/comments.repository';
+import { GroupsRepository } from '../../groups/services/groups.repository';
 import { UserRepository } from '../../users/services/user.repository';
-import { Orders_queryResponseDto } from '../models/dtos/request';
+import {
+  Orders_editRequestDto,
+  Orders_queryRequestDto,
+} from '../models/dtos/request';
 import {
   CommentsOrderResponseDto,
   OrdersResponseDto,
 } from '../models/dtos/response';
-import { ColumnsEnum } from '../models/enums';
+import { ColumnsEnum, StatusEnum } from '../models/enums';
 import { Comment_ordersMapper } from './comment_orders.mapper';
 
 @Injectable()
 export class OrdersRepository extends Repository<Orders> {
   constructor(
+    private readonly groupRepository: GroupsRepository,
     private readonly commentRepository: CommentsRepository,
     private readonly userRepository: UserRepository,
     private readonly dataSource: DataSource,
@@ -26,7 +37,7 @@ export class OrdersRepository extends Repository<Orders> {
   }
 
   public async getAllOrders(
-    query: Orders_queryResponseDto,
+    query: Orders_queryRequestDto,
   ): Promise<PaginatedDto<OrdersResponseDto>> {
     query.order = query.order || OrderEnum.ASC;
     const page = +query.page || 1;
@@ -56,20 +67,58 @@ export class OrdersRepository extends Repository<Orders> {
     };
   }
 
+  async editOrder(orderId, dto: Orders_editRequestDto, currentUser: IUserData) {
+    const order = await this.createQueryBuilder('orders')
+      .where('orders.id = :orderId', { orderId: orderId })
+      .leftJoinAndSelect('orders.groups', 'group')
+      .leftJoinAndSelect('orders.user', 'user')
+      .getOne();
+
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+
+    if (order?.user?.id != null && currentUser.id !== order.user.id) {
+      throw new ForbiddenException('This user is not manager to this order');
+    }
+
+    if (dto.hasOwnProperty('status')) {
+      if (dto.status === StatusEnum.New) {
+        order.user = null;
+      } else {
+        order.user = await this.userRepository.findOne({
+          where: { id: currentUser.id },
+        });
+      }
+    } else if (dto?.group) {
+      order.groups = await this.groupRepository.findOne({
+        where: { id: dto.group },
+      });
+    }
+
+    if (dto?.status || dto?.group) {
+      await this.save(order);
+      delete dto.group;
+    }
+
+    await this.update(orderId, dto);
+    return { message: 'Data update was successful' };
+  }
+
   async createNewCommentForOrder(
     orderId,
     dto,
-    userId,
+    currentUser,
   ): Promise<CommentsOrderResponseDto> {
     const [user, order] = await Promise.all([
       await this.userRepository.findOne({
-        where: { id: userId },
+        where: { id: currentUser.id },
         relations: ['profile'],
       }),
       await this.findOneByOrFail({ id: orderId }),
     ]);
     if (!order) {
-      throw new BadRequestException('Order not found');
+      throw new BadRequestException(`Order by ${orderId} do not found`);
     }
 
     const comment = await this.commentRepository.save(
@@ -80,12 +129,19 @@ export class OrdersRepository extends Repository<Orders> {
       }),
     );
 
+    if (comment) {
+      order.user = user;
+      await this.save(order);
+    } else {
+      throw new BadRequestException('Manager is not saved for this order');
+    }
+
     return Comment_ordersMapper.toCommentResponseDto(comment);
   }
 
   private applyFilters(
     queryBuilder: SelectQueryBuilder<Orders>,
-    query: Orders_queryResponseDto,
+    query: Orders_queryRequestDto,
   ): void {
     //const whereConditions = [];
 

@@ -15,7 +15,7 @@ export class UserMapper {
 
   public static toUserData(entity: UserEntity): IUserData {
     return {
-      userId: entity.id,
+      id: entity.id,
       email: entity.email,
     };
   }

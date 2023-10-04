@@ -4,6 +4,7 @@ import {
   Get,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
@@ -23,7 +24,10 @@ import {
 } from '../../common/decorators';
 import { IUserData } from '../../common/models/interfaces';
 import { CommentsRequestDto } from '../comments/models/dtos/request';
-import { Orders_queryResponseDto } from './models/dtos/request';
+import {
+  Orders_editRequestDto,
+  Orders_queryRequestDto,
+} from './models/dtos/request';
 import {
   CommentsOrderResponseDto,
   OrdersResponseDto,
@@ -41,9 +45,37 @@ export class OrdersController {
   @ApiPaginatedResponse('entities', OrdersResponseDto)
   @Get()
   async getOrdersList(
-    @Query() query: Orders_queryResponseDto,
+    @Query() query: Orders_queryRequestDto,
   ): Promise<PaginatedDto<OrdersResponseDto>> {
     return await this.ordersService.getAllOrders(query);
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Edit order' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Data update was successfuly',
+        },
+      },
+    },
+  })
+  @ApiParam({
+    name: 'orderId',
+    type: String,
+    description: 'Id order for edit data',
+  })
+  @Patch('/:orderId')
+  async editOrder(
+    @CurrentUser() user: IUserData,
+    @Body() body: Orders_editRequestDto,
+    @Param('orderId') orderId: string,
+  ): Promise<{ message: string }> {
+    return await this.ordersService.editOrder(orderId, body, user);
   }
 
   @ApiBearerAuth()

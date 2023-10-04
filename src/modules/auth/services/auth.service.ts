@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRedisClient, RedisClient } from '@webeleon/nestjs-redis';
 
 import {
@@ -23,7 +23,7 @@ export class AuthService {
     @InjectRedisClient() private redisClient: RedisClient,
   ) {}
 
-  public async login(userId: number): Promise<LoginResponseDto> {
+  public async login(userId): Promise<LoginResponseDto> {
     const user = await this.userRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.profile', 'profile')
@@ -32,8 +32,7 @@ export class AuthService {
       .getOne();
     // const user= await this.userRepository.findOne({
     //   where: { id: userId },
-    //   relations: ['role'],
-    //   // relations: ['profile', 'roles'],
+    //    relations: ['profile', 'roles'],
     // });
     const token = await this.tokenService.generateAuthToken({
       id: user.id,
@@ -64,9 +63,11 @@ export class AuthService {
     });
     if (!user) {
       throw new EntityNotFoundException();
-    } else if (user.is_active === true) {
-      throw new BadRequestException('User is already active');
-    } else {
+    } //else if (user.is_active === true) {
+    //throw new BadRequestException('User is already active');
+    //}
+    else {
+      user.is_active = true;
       user.password = dto.password;
       await this.userRepository.save(user);
       return { message: 'Data saved successfully' };

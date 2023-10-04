@@ -21,6 +21,7 @@ import { CurrentUser, Roles, SkipAuth } from '../../common/decorators';
 import { IUserData } from '../../common/models/interfaces';
 import { UserLoginRequestDto } from '../users/models/dtos/request';
 import { LocalAuthGuard, LogoutGuard } from './guards';
+import { RolesGuard } from './guards/roles.guard';
 import {
   ActivateManagerRequestDto,
   RefreshTokenRequestDto,
@@ -55,7 +56,7 @@ export class AuthController {
     // eslint-disable-next-line
     @Body() dto: UserLoginRequestDto,
   ): Promise<LoginResponseDto> {
-    return await this.authService.login(user.userId);
+    return await this.authService.login(user.id);
   }
 
   @SkipAuth()
@@ -71,7 +72,6 @@ export class AuthController {
     return res.status(HttpStatus.OK).json('Manager was log-out from accaunt');
   }
 
-  @Roles('ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get action token for activate manager' })
   @ApiResponse({
@@ -79,6 +79,8 @@ export class AuthController {
     description: 'get activate token',
     type: ActionTokenResponseDto,
   })
+  @Roles('ADMIN')
+  @UseGuards(RolesGuard)
   @Post('admin/get-activate-token/:userId')
   async getActivateToken(
     @Param('userId') userId: string,

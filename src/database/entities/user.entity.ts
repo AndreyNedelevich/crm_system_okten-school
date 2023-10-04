@@ -48,7 +48,7 @@ export class UserEntity {
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',
   })
-  public created_at: Date;
+  created_at: Date;
 
   @OneToMany(() => Orders, (orders) => orders.user)
   orders: Orders[];

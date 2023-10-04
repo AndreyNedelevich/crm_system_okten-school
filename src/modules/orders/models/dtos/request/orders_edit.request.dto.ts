@@ -1,46 +1,20 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsISO8601, IsOptional, IsString } from 'class-validator';
-
-import { OrderEnum } from '../../../../../common/models';
 import {
-  ColumnsEnum,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
+
+import {
   Course_formatEnum,
   Course_typeEnum,
   CourseEnum,
   StatusEnum,
 } from '../../enums';
 
-export class Orders_queryResponseDto {
-  @ApiPropertyOptional({ default: 1 })
-  @IsString()
-  @IsOptional()
-  page?: string;
-
-  @ApiPropertyOptional({ default: 25 })
-  @IsString()
-  @IsOptional()
-  limit?: string;
-
-  @ApiPropertyOptional({
-    enum: ColumnsEnum,
-    enumName: 'ColumnsEnum',
-    default: ColumnsEnum.id,
-  })
-  @IsString()
-  @IsOptional()
-  @IsEnum(ColumnsEnum)
-  sort?: ColumnsEnum;
-
-  @ApiPropertyOptional({
-    enum: OrderEnum,
-    enumName: 'OrderEnum',
-    default: OrderEnum.ASC,
-  })
-  @IsString()
-  @IsOptional()
-  @IsEnum(OrderEnum)
-  order?: OrderEnum;
-
+export class Orders_editRequestDto {
   @ApiPropertyOptional({ type: String })
   @IsString()
   @IsOptional()
@@ -56,15 +30,26 @@ export class Orders_queryResponseDto {
   @IsOptional()
   email?: string;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String, example: '050-500-26-24' })
   @IsString()
+  @Length(3, 14)
   @IsOptional()
   phone?: string;
 
-  @ApiPropertyOptional({ type: String })
-  @IsString()
+  @ApiPropertyOptional({ type: Number })
+  @IsNumber()
   @IsOptional()
-  age?: string;
+  sum?: number;
+
+  @ApiPropertyOptional({ type: Number })
+  @IsNumber()
+  @IsOptional()
+  alreadyPaid?: number;
+
+  @ApiPropertyOptional({ type: Number })
+  @IsNumber()
+  @IsOptional()
+  age?: number;
 
   @ApiPropertyOptional({
     enum: CourseEnum,
@@ -102,23 +87,8 @@ export class Orders_queryResponseDto {
   @IsEnum(StatusEnum)
   status?: StatusEnum;
 
-  @ApiPropertyOptional({ type: String })
-  @IsString()
+  @ApiPropertyOptional({ type: Number })
+  @IsNumber()
   @IsOptional()
-  manager?: string;
-
-  @ApiPropertyOptional({ type: String })
-  @IsString()
-  @IsOptional()
-  group?: string;
-
-  @ApiPropertyOptional({ type: Date })
-  @IsISO8601()
-  @IsOptional()
-  start_date?: Date;
-
-  @ApiPropertyOptional({ type: Date })
-  @IsISO8601()
-  @IsOptional()
-  end_date?: Date;
+  group?: number;
 }

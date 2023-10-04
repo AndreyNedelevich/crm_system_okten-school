@@ -22,34 +22,34 @@ export class OrdersResponseDto {
     type: String,
     nullable: true,
   })
-  name?: string | null;
+  name: string | null;
 
   @ApiProperty({
     type: String,
     nullable: true,
   })
-  surname?: string | null;
+  surname: string | null;
 
   @ApiProperty({
     type: String,
     example: 'manager@gmail.com',
     nullable: true,
   })
-  email?: string | null;
+  email: string | null;
 
   @ApiProperty({
     type: String,
     nullable: true,
     example: '0502563654',
   })
-  phone?: string | null;
+  phone: string | null;
 
   @ApiProperty({
     type: Number,
     nullable: true,
     example: 35,
   })
-  age?: number | null;
+  age: number | null;
 
   @ApiProperty({
     enum: CourseEnum,
@@ -57,7 +57,7 @@ export class OrdersResponseDto {
     example: CourseEnum.FE,
     nullable: true,
   })
-  course?: string | null;
+  course: string | null;
 
   @ApiProperty({
     enum: Course_formatEnum,
@@ -65,7 +65,7 @@ export class OrdersResponseDto {
     example: Course_formatEnum.static,
     nullable: true,
   })
-  course_format?: string | null;
+  course_format: string | null;
 
   @ApiProperty({
     enum: Course_typeEnum,
@@ -73,35 +73,34 @@ export class OrdersResponseDto {
     example: Course_typeEnum.vip,
     nullable: true,
   })
-  course_type?: string | null;
+  course_type: string | null;
 
   @ApiProperty({
     type: Number,
     nullable: true,
     example: 42000,
   })
-  sum?: number | null;
+  sum: number | null;
 
   @ApiProperty({
     type: Number,
     nullable: true,
     example: 15000,
   })
-  alredyPaid?: number | null;
+  alreadyPaid: number | null;
 
   @ApiProperty({
     type: String,
     nullable: true,
-    example: 'Чи є ще можливість попасти на курс 06.06?',
   })
-  utm?: string | null;
+  utm: string | null;
 
   @ApiProperty({
     type: String,
     nullable: true,
     example: 'target-05-2022',
   })
-  msg?: string | null;
+  msg: string | null;
 
   @ApiProperty({
     enum: StatusEnum,
@@ -109,7 +108,7 @@ export class OrdersResponseDto {
     example: StatusEnum.inWork,
     nullable: true,
   })
-  status?: string | null;
+  status: string | null;
 
   @ApiProperty({ nullable: true, type: Date })
   created_at: Date;
@@ -118,17 +117,17 @@ export class OrdersResponseDto {
     description: 'User with profile',
     type: () => User_responseDto,
   })
-  user: User_responseDto;
+  user?: User_responseDto;
 
   @ApiProperty({
     description: 'Group',
     type: () => GroupResponseDto,
   })
-  groups: GroupResponseDto;
+  groups?: GroupResponseDto;
 
   @ApiProperty({
     description: 'Comments array',
     type: [CommentsResponseDto],
   })
-  comments: CommentsResponseDto[];
+  comments?: CommentsResponseDto[];
 }
