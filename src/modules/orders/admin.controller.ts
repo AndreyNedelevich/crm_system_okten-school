@@ -5,7 +5,6 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { CsvParser } from 'nest-csv-parser';
 
 import { Roles } from '../../common/decorators';
 import { RolesGuard } from '../auth/guards/roles.guard';

@@ -3,16 +3,13 @@ import { DataSource, Repository } from 'typeorm';
 
 import { PaginatedDto } from '../../../common/decorators';
 import { CryptoHelper } from '../../../common/helpers';
-import { OrderEnum } from '../../../common/models';
 import { UserEntity } from '../../../database/entities';
-import { Orders_queryRequestDto } from '../../orders/models/dtos/request';
-import { OrdersResponseDto } from '../../orders/models/dtos/response';
 import { ProfileRepository } from '../../profile/services/profile.repository';
 import { UserRoleEnum } from '../../roles/models/enums';
 import { RolesService } from '../../roles/services/roles.service';
+import { Users_queryRequestDto } from '../models/dtos/request/users_query.request.dto';
 import { User_responseDto } from '../models/dtos/response';
 import { UserMapper } from './user.mapper';
-import { Users_queryRequestDto } from "../models/dtos/request/users_query.request.dto";
 
 @Injectable()
 export class UserRepository extends Repository<UserEntity> {
