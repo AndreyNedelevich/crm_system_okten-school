@@ -102,12 +102,12 @@ export class Orders_queryRequestDto {
   @IsEnum(StatusEnum)
   status?: StatusEnum;
 
-  @ApiPropertyOptional({ type: String })
+  @ApiPropertyOptional({ type: String, description: 'id user', example: 16 })
   @IsString()
   @IsOptional()
   manager?: string;
 
-  @ApiPropertyOptional({ type: String })
+  @ApiPropertyOptional({ type: String, example: 3, description: 'id group' })
   @IsString()
   @IsOptional()
   group?: string;

@@ -3,13 +3,13 @@ import { BeforeUpdate, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 export class CreatedUpdatedDateModel {
   @CreateDateColumn({
     type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
+    default: () => 'CURRENT_TIMESTAMP(6)',
   })
-  created: Date;
+  created_at: Date;
 
   @UpdateDateColumn({
     type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
+    default: () => 'CURRENT_TIMESTAMP(6)',
   })
   updated: Date;
 

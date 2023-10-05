@@ -13,7 +13,7 @@ export class Profile_responseDtoDto {
 
   @ApiProperty({
     description: 'lastName user',
-    example: 'Doe',
+    example: 'Shevchenko',
     required: true,
   })
   @IsString()

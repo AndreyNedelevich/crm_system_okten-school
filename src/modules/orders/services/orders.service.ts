@@ -8,6 +8,7 @@ import {
 } from '../models/dtos/request';
 import {
   CommentsOrderResponseDto,
+  Orders_statisticResponseDto,
   OrdersResponseDto,
 } from '../models/dtos/response';
 import { OrdersRepository } from './orders.repository';
@@ -20,6 +21,12 @@ export class OrdersService {
     query: Orders_queryRequestDto,
   ): Promise<PaginatedDto<OrdersResponseDto>> {
     return await this.ordersRepository.getAllOrders(query);
+  }
+
+  async getOrdersExelTable(
+    query: Orders_queryRequestDto,
+  ): Promise<OrdersResponseDto[]> {
+    return await this.ordersRepository.getOrdersExelTable(query);
   }
 
   async editOrder(
@@ -40,5 +47,11 @@ export class OrdersService {
       dto,
       user,
     );
+  }
+
+  async getOrdersStatistic(
+    userId?: number,
+  ): Promise<Orders_statisticResponseDto> {
+    return await this.ordersRepository.getOrdersStatistic(userId);
   }
 }

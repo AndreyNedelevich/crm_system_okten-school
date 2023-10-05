@@ -9,7 +9,7 @@ export class User_responseDto {
   readonly id: number;
 
   @ApiProperty({
-    example: 'admin@gmail.com',
+    example: 'manager@gmail.com',
     required: true,
     description: 'Unique email',
     nullable: false,

@@ -38,6 +38,7 @@
     "cross-var": "^1.1.0",
     "dotenv": "^16.3.1",
     "mysql2": "^3.6.1",
+    "nest-csv-parser": "^2.0.4",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "reflect-metadata": "^0.1.13",

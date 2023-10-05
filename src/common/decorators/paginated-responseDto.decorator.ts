@@ -8,7 +8,7 @@ export class PaginatedDto<TModel> {
   @ApiProperty({ example: 20, type: Number })
   pages: number;
 
-  @ApiProperty({ example: 500, type: Number })
+  @ApiProperty({ example: 100, type: Number })
   countItem: number;
 
   @ApiProperty()

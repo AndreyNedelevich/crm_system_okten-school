@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -16,12 +17,20 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { Roles, SkipAuth } from '../../common/decorators';
+import {
+  ApiPaginatedResponse,
+  PaginatedDto,
+  Roles,
+  SkipAuth,
+} from '../../common/decorators';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { Orders_queryRequestDto } from '../orders/models/dtos/request';
+import { Status_IsActiveEnum } from './models/dtos/enums/status_IsActive.enum';
 import {
   ManagerCreateRequestDto,
   User_requestDto,
 } from './models/dtos/request';
+import { Users_queryRequestDto } from './models/dtos/request/users_query.request.dto';
 import { User_responseDto } from './models/dtos/response';
 import { UsersService } from './services/users.service';
 
@@ -30,6 +39,17 @@ import { UsersService } from './services/users.service';
 export class AdminController {
   constructor(private userServise: UsersService) {}
 
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get all users with pagination format' })
+  @ApiPaginatedResponse('entities', User_responseDto)
+  @Roles('ADMIN')
+  @UseGuards(RolesGuard)
+  @Get('users')
+  async getUsersList(
+    @Query() query: Users_queryRequestDto,
+  ): Promise<PaginatedDto<User_responseDto>> {
+    return await this.userServise.getAllUsers(query);
+  }
   @SkipAuth()
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a user with administrator role' })
@@ -38,6 +58,8 @@ export class AdminController {
     description: 'Create administrator',
     type: User_responseDto,
   })
+  @Roles('ADMIN')
+  @UseGuards(RolesGuard)
   @Post('users/registr-admin')
   createUserAdmin(@Body() dto: User_requestDto): Promise<User_responseDto> {
     return this.userServise.createUserWithProfile(dto);
@@ -83,7 +105,10 @@ export class AdminController {
   @UseGuards(RolesGuard)
   @Patch('users/:userId/ban')
   async banUser(@Param('userId') userId: string): Promise<{ message: string }> {
-    return await this.userServise.banUser(+userId);
+    return await this.userServise.ban_unbanUser(
+      +userId,
+      Status_IsActiveEnum.ban,
+    );
   }
 
   @ApiBearerAuth()
@@ -111,6 +136,9 @@ export class AdminController {
   async unbanUser(
     @Param('userId') userId: string,
   ): Promise<{ message: string }> {
-    return await this.userServise.unbanUser(+userId);
+    return await this.userServise.ban_unbanUser(
+      +userId,
+      Status_IsActiveEnum.unban,
+    );
   }
 }

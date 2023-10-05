@@ -20,10 +20,11 @@ import {
 } from '../models/dtos/request';
 import {
   CommentsOrderResponseDto,
+  Orders_statisticResponseDto,
   OrdersResponseDto,
 } from '../models/dtos/response';
 import { ColumnsEnum, StatusEnum } from '../models/enums';
-import { Comment_ordersMapper } from './comment_orders.mapper';
+import { OrdersMapper } from './orders.mapper';
 
 @Injectable()
 export class OrdersRepository extends Repository<Orders> {
@@ -48,7 +49,7 @@ export class OrdersRepository extends Repository<Orders> {
       .leftJoinAndSelect('orders.groups', 'group')
       .leftJoinAndSelect('orders.user', 'user')
       .leftJoinAndSelect('user.profile', 'profile')
-      .leftJoinAndSelect('user.role', 'role')
+      // .leftJoinAndSelect('user.role', 'role')
       .leftJoinAndSelect('orders.comments', 'comments');
 
     this.applyFilters(queryBuilder, query);
@@ -136,7 +137,56 @@ export class OrdersRepository extends Repository<Orders> {
       throw new BadRequestException('Manager is not saved for this order');
     }
 
-    return Comment_ordersMapper.toCommentResponseDto(comment);
+    return OrdersMapper.toCommentResponseDto(comment);
+  }
+
+  public async getOrdersStatistic(
+    userId?: number,
+  ): Promise<Orders_statisticResponseDto> {
+    const queryBuilder = this.createQueryBuilder('orders')
+      .select("COALESCE(orders.status, 'Unknown')", 'status')
+      .addSelect('COUNT(*)', 'count')
+      .groupBy("COALESCE(orders.status, 'Unknown')");
+
+    if (userId) {
+      queryBuilder.where('orders.user.id = :userId', { userId });
+    }
+
+    const statuses = await queryBuilder.getRawMany();
+
+    const totalCount = statuses.reduce(
+      (total, status) => total + parseInt(status.count, 10),
+      0,
+    );
+
+    return {
+      total_count: totalCount,
+      statuses: statuses.map((status) => ({
+        status: status.status === 'Unknown' ? 'not status' : status.status,
+        count: parseInt(status.count, 10),
+      })),
+    };
+  }
+
+  public async getOrdersExelTable(
+    query: Orders_queryRequestDto,
+  ): Promise<OrdersResponseDto[]> {
+    query.order = query.order || OrderEnum.ASC;
+
+    const queryBuilder = this.createQueryBuilder('orders')
+      .leftJoinAndSelect('orders.groups', 'group')
+      .leftJoinAndSelect('orders.user', 'user')
+      .leftJoinAndSelect('user.profile', 'profile');
+
+    this.applyFilters(queryBuilder, query);
+    this.applyDateFilters(queryBuilder, query.start_date, query.end_date);
+    this.applySort(queryBuilder, query.sort, query.order);
+
+    const orders = await queryBuilder.getMany();
+
+    console.log(orders);
+
+    return orders;
   }
 
   private applyFilters(
@@ -161,8 +211,8 @@ export class OrdersRepository extends Repository<Orders> {
         param: ColumnsEnum.course_type,
       },
       { field: `orders.${ColumnsEnum.status}`, param: ColumnsEnum.status },
-      { field: `orders.${ColumnsEnum.group}`, param: ColumnsEnum.group },
-      { field: `orders.${ColumnsEnum.manager}`, param: ColumnsEnum.manager },
+      { field: `orders.groups.id`, param: ColumnsEnum.group },
+      { field: `orders.user.id`, param: ColumnsEnum.manager },
     ];
 
     // filters.forEach(filter => {
