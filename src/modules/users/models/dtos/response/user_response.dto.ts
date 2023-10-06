@@ -27,6 +27,9 @@ export class User_responseDto {
   @IsOptional()
   is_active?: boolean;
 
+  @ApiProperty({ nullable: true, type: Date })
+  last_login: Date;
+
   @ApiProperty({
     description: 'User profile',
     type: () => Profile_responseDtoDto,

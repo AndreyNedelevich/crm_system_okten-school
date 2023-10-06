@@ -1,7 +1,8 @@
-import { Controller, Get, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Param, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -26,7 +27,26 @@ export class OrdersAdminController {
     type: Orders_statisticResponseDto,
   })
   @Get('orders/statistic')
-  async getAllOrdersStatistic() {
+  async getAllOrdersStatistic(): Promise<Orders_statisticResponseDto> {
     return await this.ordersService.getOrdersStatistic();
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get statistic to orders by one User' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Orders statistic by user',
+    type: Orders_statisticResponseDto,
+  })
+  @ApiParam({
+    name: 'userId',
+    type: String,
+    description: 'user id',
+  })
+  @Get('orders/statistic/users/:userId')
+  async getAOrdersStatisticByUser(
+    @Param('userId') userId: string,
+  ): Promise<Orders_statisticResponseDto> {
+    return await this.ordersService.getOrdersStatistic(+userId);
   }
 }

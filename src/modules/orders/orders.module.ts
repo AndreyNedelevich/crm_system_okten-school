@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { CsvModule } from 'nest-csv-parser';
 
 import { AuthModule } from '../auth/auth.module';
 import { CommentsModule } from '../comments/comments.module';
@@ -17,7 +16,6 @@ import { OrdersService } from './services/orders.service';
     CommentsModule,
     GroupsModule,
     AuthModule,
-    CsvModule,
   ],
   controllers: [OrdersController, OrdersAdminController],
   providers: [OrdersService, OrdersRepository],

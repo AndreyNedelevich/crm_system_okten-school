@@ -32,7 +32,14 @@ export class RolesGuard implements CanActivate {
         accessToken,
         TokenTypeEnum.Access,
       );
-      return requiredRoles.some((role) => payload.role.includes(role));
+      const permission = requiredRoles.some((role) =>
+        payload.role.includes(role),
+      );
+      if (!permission) {
+        throw new Error();
+      } else {
+        return true;
+      }
     } catch (e) {
       throw new NoPermissionException();
     }

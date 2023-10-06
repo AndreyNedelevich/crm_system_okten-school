@@ -10,6 +10,7 @@ export class UserMapper {
       is_active: entity.is_active,
       profile: entity.profile,
       role: entity.role,
+      last_login: entity.last_login,
     };
   }
 

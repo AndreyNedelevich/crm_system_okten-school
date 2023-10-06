@@ -16,6 +16,7 @@ import { GroupsRepository } from '../../groups/services/groups.repository';
 import { UserRepository } from '../../users/services/user.repository';
 import {
   Orders_editRequestDto,
+  Orders_excel_queryRequestDto,
   Orders_queryRequestDto,
 } from '../models/dtos/request';
 import {
@@ -49,7 +50,6 @@ export class OrdersRepository extends Repository<Orders> {
       .leftJoinAndSelect('orders.groups', 'group')
       .leftJoinAndSelect('orders.user', 'user')
       .leftJoinAndSelect('user.profile', 'profile')
-      // .leftJoinAndSelect('user.role', 'role')
       .leftJoinAndSelect('orders.comments', 'comments');
 
     this.applyFilters(queryBuilder, query);
@@ -91,7 +91,8 @@ export class OrdersRepository extends Repository<Orders> {
           where: { id: currentUser.id },
         });
       }
-    } else if (dto?.group) {
+    }
+    if (dto?.group) {
       order.groups = await this.groupRepository.findOne({
         where: { id: dto.group },
       });
@@ -169,7 +170,7 @@ export class OrdersRepository extends Repository<Orders> {
   }
 
   public async getOrdersExelTable(
-    query: Orders_queryRequestDto,
+    query: Orders_excel_queryRequestDto,
   ): Promise<OrdersResponseDto[]> {
     query.order = query.order || OrderEnum.ASC;
 
@@ -182,11 +183,7 @@ export class OrdersRepository extends Repository<Orders> {
     this.applyDateFilters(queryBuilder, query.start_date, query.end_date);
     this.applySort(queryBuilder, query.sort, query.order);
 
-    const orders = await queryBuilder.getMany();
-
-    console.log(orders);
-
-    return orders;
+    return await queryBuilder.getMany();
   }
 
   private applyFilters(

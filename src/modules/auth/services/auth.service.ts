@@ -26,7 +26,6 @@ export class AuthService {
   public async login(userId): Promise<LoginResponseDto> {
     const user = await this.userRepository
       .createQueryBuilder('user')
-      .leftJoinAndSelect('user.profile', 'profile')
       .leftJoinAndSelect('user.role', 'role')
       .where('user.id = :userId', { userId })
       .getOne();
@@ -40,6 +39,9 @@ export class AuthService {
         'The account is blocked. Contact the administration.',
       );
     }
+
+    user.last_login = new Date();
+    await this.userRepository.save(user);
 
     const token = await this.tokenService.generateAuthToken({
       id: user.id,
@@ -71,10 +73,7 @@ export class AuthService {
     });
     if (!user) {
       throw new EntityNotFoundException();
-    } //else if (user.is_active === true) {
-    //throw new BadRequestException('User is already active');
-    //}
-    else {
+    } else {
       user.is_active = true;
       user.password = dto.password;
       await this.userRepository.save(user);

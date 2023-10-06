@@ -4,6 +4,7 @@ import { PaginatedDto } from '../../../common/decorators';
 import { IUserData } from '../../../common/models/interfaces';
 import {
   Orders_editRequestDto,
+  Orders_excel_queryRequestDto,
   Orders_queryRequestDto,
 } from '../models/dtos/request';
 import {
@@ -24,7 +25,7 @@ export class OrdersService {
   }
 
   async getOrdersExelTable(
-    query: Orders_queryRequestDto,
+    query: Orders_excel_queryRequestDto,
   ): Promise<OrdersResponseDto[]> {
     return await this.ordersRepository.getOrdersExelTable(query);
   }

@@ -1,5 +1,5 @@
 export enum CourseEnum {
-  FC = 'FC',
+  FS = 'FS',
   QACX = 'QACX',
   JCX = 'JCX',
   JSCX = 'JSCX',

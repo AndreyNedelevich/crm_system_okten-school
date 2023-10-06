@@ -18,8 +18,8 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import * as excel from 'exceljs';
 import { Response } from 'express';
-import { CsvParser } from 'nest-csv-parser';
 
 import {
   ApiPaginatedResponse,
@@ -30,6 +30,7 @@ import { IUserData } from '../../common/models/interfaces';
 import { CommentsRequestDto } from '../comments/models/dtos/request';
 import {
   Orders_editRequestDto,
+  Orders_excel_queryRequestDto,
   Orders_queryRequestDto,
 } from './models/dtos/request';
 import {
@@ -43,10 +44,7 @@ import { OrdersService } from './services/orders.service';
 @ApiTags('Orders')
 @Controller('orders')
 export class OrdersController {
-  constructor(
-    private readonly ordersService: OrdersService,
-    private readonly csvParser: CsvParser,
-  ) {}
+  constructor(private readonly ordersService: OrdersService) {}
 
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get orders with pagination format' })
@@ -126,7 +124,7 @@ export class OrdersController {
   @Get('/excel')
   async getOrdersExelTable(
     @Res() res: Response,
-    @Query() query: Orders_queryRequestDto,
+    @Query() query: Orders_excel_queryRequestDto,
   ) {
     const ordersWithFilter: OrdersResponseDto[] =
       await this.ordersService.getOrdersExelTable(query);
@@ -137,10 +135,47 @@ export class OrdersController {
       },
     );
 
-    const csv = await this.csvParser.parse(mappedData, Orders_exelResponseDto);
+    const workbook = new excel.Workbook();
+    const worksheet = workbook.addWorksheet('Sheet 1');
 
-    res.header('Content-Type', 'text/csv');
-    res.attachment('data.csv');
-    res.send(csv);
+    const headerRow = worksheet.addRow(Object.keys(mappedData[0]));
+    headerRow.eachCell((cell) => {
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF87CEEB' },
+      };
+    });
+
+    mappedData.forEach((data) => {
+      worksheet.addRow(Object.values(data));
+    });
+
+    worksheet.eachRow({ includeEmpty: true }, (row) => {
+      row.eachCell((cell) => {
+        row.height = 20;
+        cell.font = { size: 14 };
+        cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' },
+        };
+      });
+    });
+
+    worksheet.columns.forEach((column) => {
+      column.width = 15;
+    });
+
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
+    res.setHeader('Content-Disposition', 'attachment; filename=example.xlsx');
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    res.send(buffer);
   }
 }

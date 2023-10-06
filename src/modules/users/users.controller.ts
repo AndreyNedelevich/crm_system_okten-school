@@ -1,5 +1,10 @@
 import { Controller, Get, HttpStatus } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { CurrentUser } from '../../common/decorators';
 import { IUserData } from '../../common/models/interfaces';
@@ -11,6 +16,7 @@ import { UsersService } from './services/users.service';
 export class UsersController {
   constructor(private userServise: UsersService) {}
 
+  @ApiBearerAuth()
   @ApiOperation({ description: 'Get current user by token' })
   @ApiResponse({
     status: HttpStatus.OK,

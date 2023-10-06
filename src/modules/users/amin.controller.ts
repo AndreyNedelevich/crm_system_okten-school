@@ -34,6 +34,8 @@ import { User_responseDto } from './models/dtos/response';
 import { UsersService } from './services/users.service';
 
 @ApiTags('Admin')
+@Roles('ADMIN')
+@UseGuards(RolesGuard)
 @Controller('admin')
 export class AdminController {
   constructor(private userServise: UsersService) {}
@@ -41,8 +43,6 @@ export class AdminController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all users with pagination format' })
   @ApiPaginatedResponse('entities', User_responseDto)
-  @Roles('ADMIN')
-  @UseGuards(RolesGuard)
   @Get('users')
   async getUsersList(
     @Query() query: Users_queryRequestDto,
@@ -72,8 +72,6 @@ export class AdminController {
     description: 'Create Manager',
     type: User_responseDto,
   })
-  @Roles('ADMIN')
-  @UseGuards(RolesGuard)
   @Post('users/registr-manager')
   async registrManager(
     @Body() dto: ManagerCreateRequestDto,
@@ -96,12 +94,10 @@ export class AdminController {
     },
   })
   @ApiParam({
-    name: 'orderId',
+    name: 'userId',
     type: String,
-    description: 'id user',
+    description: 'user id',
   })
-  @Roles('ADMIN')
-  @UseGuards(RolesGuard)
   @Patch('users/:userId/ban')
   async banUser(@Param('userId') userId: string): Promise<{ message: string }> {
     return await this.userServise.ban_unbanUser(
@@ -125,12 +121,10 @@ export class AdminController {
     },
   })
   @ApiParam({
-    name: 'orderId',
+    name: 'userId',
     type: String,
-    description: 'id user',
+    description: 'user id',
   })
-  @Roles('ADMIN')
-  @UseGuards(RolesGuard)
   @Patch('users/:userId/unban')
   async unbanUser(
     @Param('userId') userId: string,

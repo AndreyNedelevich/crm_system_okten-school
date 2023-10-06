@@ -50,6 +50,12 @@ export class UserEntity {
   })
   created_at: Date;
 
+  @Column({
+    type: 'timestamp',
+    nullable: true,
+  })
+  last_login: Date;
+
   @OneToMany(() => Orders, (orders) => orders.user)
   orders: Orders[];
 
