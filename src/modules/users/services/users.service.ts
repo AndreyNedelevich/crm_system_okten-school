@@ -68,7 +68,6 @@ export class UsersService {
         throw new BadRequestException('User already baned');
       }
       findUser.is_active = false;
-      findUser.password = null;
     }
     await this.userRepository.save(findUser);
     return {

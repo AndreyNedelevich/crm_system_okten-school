@@ -10,7 +10,6 @@ import configuration from '../../config/auth/configuration';
 import { AuthConfigService } from '../../config/auth/configuration.service';
 import { ProfileModule } from '../profile/profile.module';
 import { RolesModule } from '../roles/roles.module';
-import { UserRepository } from '../users/services/user.repository';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { JwtAuthGuard } from './guards';

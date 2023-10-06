@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRedisClient, RedisClient } from '@webeleon/nestjs-redis';
 
 import {
@@ -34,11 +34,19 @@ export class AuthService {
     //   where: { id: userId },
     //    relations: ['profile', 'roles'],
     // });
+
+    if (user.is_active === false) {
+      throw new BadRequestException(
+        'The account is blocked. Contact the administration.',
+      );
+    }
+
     const token = await this.tokenService.generateAuthToken({
       id: user.id,
       email: user.email,
       role: user.role.value,
     });
+
     return { token, user: UserMapper.toResponseDto(user) };
   }
 

@@ -6,13 +6,10 @@ import {
   HttpStatus,
   Param,
   Post,
-  UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-import { Roles } from '../../common/decorators';
 import { RoleEntity } from '../../database/entities';
-import { RolesGuard } from '../auth/guards/roles.guard';
 import { CreateRoleDto, RoleResponseDto } from './models/dtos/response';
 import { UserRoleEnum } from './models/enums';
 import { RolesService } from './services/roles.service';

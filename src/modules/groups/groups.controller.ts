@@ -1,7 +1,6 @@
 import { Body, Controller, Get, HttpStatus, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-import { GroupsEntity } from '../../database/entities/groups.entity';
 import { GroupRequestDto } from './models/dtos/request';
 import { GroupResponseDto } from './models/dtos/response';
 import { GroupsService } from './services/groups.service';
