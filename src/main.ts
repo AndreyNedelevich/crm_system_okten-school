@@ -10,8 +10,8 @@ import { AppConfigService } from './config/app/configuration.service';
 
 function initSwagger(app: INestApplication): void {
   const documentBuilder: DocumentBuilder = new DocumentBuilder()
-    .setTitle('srm okten')
-    .setDescription('srm system')
+    .setTitle('crm okten')
+    .setDescription('crm system')
     .addBearerAuth({
       type: 'http',
       scheme: 'bearer',
