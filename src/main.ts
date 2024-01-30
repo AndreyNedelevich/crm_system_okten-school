@@ -31,7 +31,6 @@ function initSwagger(app: INestApplication): void {
     },
   });
 }
-
 function setCorsPolicy(app: INestApplication): void {
   app.enableCors({
     origin: '*',
